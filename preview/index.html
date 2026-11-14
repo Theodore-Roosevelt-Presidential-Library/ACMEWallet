@@ -24,7 +24,7 @@
   .pass { --bg: var(--night-sky); --lbl: var(--gray-sky); width: 100%; max-width: 340px; background: var(--bg); color: #fff; font-family: var(--font-caption); border-radius: 14px; padding: 16px 16px 20px; box-shadow: 0 10px 28px rgba(9, 42, 77, .28); overflow: hidden; }
   .pass.m { --bg: var(--dark-forest); --lbl: var(--sand); box-shadow: 0 10px 28px rgba(27, 69, 50, .28); }
   .pass .head { display: flex; align-items: center; gap: 12px; font-size: 15px; min-height: 44px; }
-  .pass .head img.logo { height: 44px; width: auto; display: block; }
+  .pass .head img.logo { width: 160px; height: auto; display: block; }
   .pass .head img.round { height: 40px; width: 40px; border-radius: 50%; display: block; flex: none; }
   .pass .lbl { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--lbl); margin: 0; }
   .pass .val { margin: 1px 0 0; font-size: 16px; overflow-wrap: anywhere; }
@@ -57,7 +57,7 @@
 <body>
 <header class="top">
   <div class="in">
-    <img class="logo" src="../assets/img/trpl-logo-stacked-white.svg" alt="Theodore Roosevelt Presidential Library" width="106" height="62">
+    <img class="logo" src="../assets/img/trpl-logo-horizontal-white.svg" alt="Theodore Roosevelt Presidential Library" width="235" height="48">
     <p class="kicker">Labs</p>
     <h1>Pass preview</h1>
     <p class="lede">What tickets and membership cards will look like once they are in a visitor's wallet. Sample data only.</p>
@@ -98,7 +98,7 @@
   <div class="gallery">
     <figure>
       <div class="pass" id="apple-ticket">
-        <div class="head"><img class="logo" src="../assets/img/trpl-logo-stacked-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
+        <div class="head"><img class="logo" src="../assets/img/trpl-logo-horizontal-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
         <div class="photo">Photo from the Library's asset library</div>
         <div class="primary"><p class="lbl">Admission</p><p class="val" data-f="event"></p></div>
         <div class="row">
@@ -142,7 +142,7 @@
   <div class="gallery">
     <figure>
       <div class="pass m" id="apple-card">
-        <div class="head"><img class="logo" src="../assets/img/trpl-logo-stacked-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
+        <div class="head"><img class="logo" src="../assets/img/trpl-logo-horizontal-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
         <div class="primary"><p class="lbl">Member</p><p class="val" data-f="member"></p></div>
         <div class="row">
           <div><p class="lbl">Level</p><p class="val" data-f="level"></p></div>

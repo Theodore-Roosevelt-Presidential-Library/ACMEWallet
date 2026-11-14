@@ -118,7 +118,8 @@ makes one to three ACME calls per lookup and per download.
 
 Artwork comes from the Library's brand kit (brand.labs.trlibrary.com) and is
 built by `scripts/build_pass_art.py` at the repo root. Logos are scaled and
-placed on a brand background color, never recolored or redrawn.
+placed on a brand background color, never redrawn. The white horizontal logo
+is made from the kit's black file by changing its one fill color.
 
 | Kind | Background | Text | Labels |
 |---|---|---|---|
@@ -131,7 +132,7 @@ settings form.
 | File in `pass_assets/<kind>/` | Size (px) | What |
 |---|---|---|
 | `icon.png`, `@2x`, `@3x` | 29, 58, 87 square | TR Brand Mark on the background color. Apple requires it |
-| `logo.png`, `@2x`, `@3x` | 50, 100, 150 tall | Stacked logo, white, transparent. Top left of the Apple pass |
+| `logo.png`, `@2x`, `@3x` | 160, 320, 480 wide | Horizontal logo in white, transparent. Top left of the Apple pass |
 | `strip.png`, `@2x`, `@3x` | 375x98, 750x196, 1125x294 | Optional photo band on Apple tickets. Not supplied; add a cleared photo from the Library's asset library and it is picked up automatically |
 
 Google loads images by URL. The round logos are on the Pages site
