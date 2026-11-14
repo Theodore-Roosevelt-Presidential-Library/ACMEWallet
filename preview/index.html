@@ -19,11 +19,14 @@
   figcaption { font-family: var(--font-caption); font-size: 14px; color: #454a4f; margin-top: 10px; max-width: 340px; }
   figcaption strong { display: block; color: var(--dark-gray); font-size: 15px; }
 
-  /* A pass. Colors come from the same defaults the module ships with. */
-  .pass { width: 100%; max-width: 340px; background: var(--night-sky); color: #fff; font-family: var(--font-caption); border-radius: 14px; padding: 16px 16px 20px; box-shadow: 0 10px 28px rgba(9, 42, 77, .28); }
-  .pass .head { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
-  .pass .mark { width: 34px; height: 34px; border-radius: 6px; border: 2px dashed var(--sand); flex: none; display: grid; place-items: center; font-size: 9px; font-weight: 400; color: var(--sand); line-height: 1; text-align: center; }
-  .pass .lbl { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--sand); margin: 0; }
+  /* A pass. Colors and artwork are the module's defaults:
+     tickets Night Sky with Gray Sky labels, memberships Dark Forest with Sand. */
+  .pass { --bg: var(--night-sky); --lbl: var(--gray-sky); width: 100%; max-width: 340px; background: var(--bg); color: #fff; font-family: var(--font-caption); border-radius: 14px; padding: 16px 16px 20px; box-shadow: 0 10px 28px rgba(9, 42, 77, .28); overflow: hidden; }
+  .pass.m { --bg: var(--dark-forest); --lbl: var(--sand); box-shadow: 0 10px 28px rgba(27, 69, 50, .28); }
+  .pass .head { display: flex; align-items: center; gap: 12px; font-size: 15px; min-height: 44px; }
+  .pass .head img.logo { height: 44px; width: auto; display: block; }
+  .pass .head img.round { height: 40px; width: 40px; border-radius: 50%; display: block; flex: none; }
+  .pass .lbl { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--lbl); margin: 0; }
   .pass .val { margin: 1px 0 0; font-size: 16px; overflow-wrap: anywhere; }
   .pass .primary { margin-top: 18px; }
   .pass .primary .val { font-size: 27px; line-height: 1.12; }
@@ -33,22 +36,29 @@
   .pass .code svg { display: block; width: 152px; height: 152px; }
   .pass .code span { display: block; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; margin-top: 6px; letter-spacing: .04em; }
 
-  /* Google's pass: logo and issuer on top, a title, then rows, code last. */
+  /* Optional photo band. Empty until a cleared photo is chosen. */
+  .pass .photo { display: none; margin: 14px -16px 0; height: 88px; border-top: 1px dashed var(--lbl); border-bottom: 1px dashed var(--lbl); color: var(--lbl); font-size: 12px; align-items: center; justify-content: center; text-align: center; padding: 0 20px; background: rgba(255,255,255,.06); }
+  .pass.g .photo { margin: 18px -20px -22px; height: 96px; border-bottom: 0; }
+  body.photos .pass .photo { display: flex; }
+  .toggle { font-family: var(--font-caption); font-size: 15px; display: flex; gap: 8px; align-items: center; margin: 4px 0 0; }
+  .toggle input { width: 18px; height: 18px; }
+
+  /* Google's pass: round logo and issuer on top, a title, then rows, code last. */
   .pass.g { border-radius: 24px; padding: 18px 20px 22px; }
-  .pass.g .mark { border-radius: 50%; }
-  .pass.g .head { font-weight: 400; font-size: 15px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.25); }
+  .pass.g .head { padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.25); }
   .pass.g .title { font-size: 24px; line-height: 1.15; margin: 14px 0 0; }
-  .pass.g .sub { margin: 2px 0 0; color: var(--sand); font-size: 14px; }
+  .pass.g .sub { margin: 2px 0 0; color: var(--lbl); font-size: 14px; }
 
   .lock { max-width: 340px; background: #dfe3e8; border-radius: 14px; padding: 12px 14px; font-family: var(--font-caption); font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
-  .lock .mark { width: 30px; height: 30px; border-radius: 7px; background: var(--night-sky); flex: none; }
+  .lock img { width: 32px; height: 32px; border-radius: 7px; flex: none; display: block; }
   .lock b { display: block; }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="in">
-    <p class="kicker">Theodore Roosevelt Presidential Library · Labs</p>
+    <img class="logo" src="../assets/img/trpl-logo-stacked-white.svg" alt="Theodore Roosevelt Presidential Library" width="106" height="62">
+    <p class="kicker">Labs</p>
     <h1>Pass preview</h1>
     <p class="lede">What tickets and membership cards will look like once they are in a visitor's wallet. Sample data only.</p>
     <nav aria-label="Pages">
@@ -60,7 +70,7 @@
 </header>
 
 <main>
-  <p class="note"><strong>Approximate.</strong> Apple and Google draw the final layout themselves, so spacing and type will differ a little on a real phone. The dashed square is where the Library's mark goes; the artwork here is a placeholder. Fields, order, colors and the code are what the module produces.</p>
+  <p class="note"><strong>Approximate.</strong> Apple and Google draw the final layout themselves, so spacing and type will differ a little on a real phone. The logos, colors, fields and codes are what the module produces: tickets in Night Sky, membership cards in Dark Forest, both from the brand kit.</p>
 
   <h2>Try your own details</h2>
   <form id="controls" aria-label="Sample details">
@@ -81,13 +91,15 @@
         <div><label for="f-expires">Valid through</label><input id="f-expires" type="date" value="2027-12-31"></div>
       </div>
     </fieldset>
+    <label class="toggle"><input type="checkbox" id="f-photos"> Show where a photo band can go</label>
   </form>
 
   <h2>Tickets</h2>
   <div class="gallery">
     <figure>
       <div class="pass" id="apple-ticket">
-        <div class="head"><span class="mark" aria-hidden="true">logo</span><span>Theodore Roosevelt Presidential Library</span></div>
+        <div class="head"><img class="logo" src="../assets/img/trpl-logo-stacked-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
+        <div class="photo">Photo from the Library's asset library</div>
         <div class="primary"><p class="lbl">Admission</p><p class="val" data-f="event"></p></div>
         <div class="row">
           <div><p class="lbl">Date</p><p class="val" data-f="date"></p></div>
@@ -104,7 +116,7 @@
 
     <figure>
       <div class="pass g" id="google-ticket">
-        <div class="head"><span class="mark" aria-hidden="true">logo</span><span>Theodore Roosevelt Presidential Library</span></div>
+        <div class="head"><img class="round" src="../assets/img/google-logo-ticket.png" alt=""><span>Theodore Roosevelt Presidential Library</span></div>
         <p class="title" data-f="event"></p>
         <p class="sub" data-f="date-time"></p>
         <div class="row">
@@ -112,13 +124,14 @@
           <div><p class="lbl">Ticket type</p><p class="val" data-f="type"></p></div>
         </div>
         <div class="code"><div data-qr="ticket"></div><span data-f="ticket-code"></span></div>
+        <div class="photo">Photo from the Library's asset library</div>
       </div>
       <figcaption><strong>Google Wallet · ticket</strong>Several tickets from one order can be saved in one tap.</figcaption>
     </figure>
 
     <figure>
       <div class="lock" role="img" aria-label="Sample lock screen reminder">
-        <span class="mark" aria-hidden="true"></span>
+        <img src="../assets/img/google-logo-ticket.png" alt="">
         <span><b>Theodore Roosevelt Presidential Library</b><span data-f="lock"></span></span>
       </div>
       <figcaption><strong>On the lock screen</strong>iPhone raises the ticket around the entry time and, once the entrance coordinates are set, on arrival. Android sends its own reminder about three hours ahead. Wording is the phone's, not the Library's.</figcaption>
@@ -128,8 +141,8 @@
   <h2>Membership cards</h2>
   <div class="gallery">
     <figure>
-      <div class="pass" id="apple-card">
-        <div class="head"><span class="mark" aria-hidden="true">logo</span><span>Theodore Roosevelt Presidential Library</span></div>
+      <div class="pass m" id="apple-card">
+        <div class="head"><img class="logo" src="../assets/img/trpl-logo-stacked-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
         <div class="primary"><p class="lbl">Member</p><p class="val" data-f="member"></p></div>
         <div class="row">
           <div><p class="lbl">Level</p><p class="val" data-f="level"></p></div>
@@ -141,8 +154,8 @@
     </figure>
 
     <figure>
-      <div class="pass g" id="google-card">
-        <div class="head"><span class="mark" aria-hidden="true">logo</span><span>Theodore Roosevelt Presidential Library</span></div>
+      <div class="pass g m" id="google-card">
+        <div class="head"><img class="round" src="../assets/img/google-logo-membership.png" alt=""><span>Theodore Roosevelt Presidential Library</span></div>
         <p class="sub" data-f="level" style="margin-top:14px"></p>
         <p class="title" data-f="member" style="margin-top:2px"></p>
         <div class="row">
@@ -150,15 +163,17 @@
           <div><p class="lbl">Valid through</p><p class="val" data-f="expires"></p></div>
         </div>
         <div class="code"><div data-qr="card"></div><span data-f="card-code"></span></div>
+        <div class="photo">Photo from the Library's asset library</div>
       </div>
       <figcaption><strong>Google Wallet · membership</strong>Stops showing as valid after the expiration date.</figcaption>
     </figure>
   </div>
 
-  <h2>What is still placeholder</h2>
+  <h2>What is still open</h2>
   <table class="plain">
-    <tr><th scope="row">Logo and icon</th><td>Final art from the design team, at Apple's and Google's sizes. Sizes are listed in the repo's <code>fivejars/README.md</code>.</td></tr>
-    <tr><th scope="row">Colors</th><td>Night Sky, white and Sand from the brand tokens. One setting changes them.</td></tr>
+    <tr><th scope="row">App icon</th><td>The TR Brand Mark stands in on the lock screen and in Google's round logo until the TR monogram app icon is supplied.</td></tr>
+    <tr><th scope="row">Photos</th><td>None yet. A photo band is optional on tickets (Apple and Google) and on Google membership cards. It needs a cleared image from the Library's asset library.</td></tr>
+    <tr><th scope="row">Sign-off</th><td>Logo sizes on a phone are small. Marketing &amp; Communications should approve the logo choice and the Dark Forest and Sand pairing on a real device.</td></tr>
     <tr><th scope="row">Codes</th><td>Samples in ACME's real formats: tickets as <code>at······-··················-········</code>, cards as nine digits.</td></tr>
     <tr><th scope="row">Live Activities</th><td>Not available to a QR-scanned museum ticket today. The lock screen behavior above is what both phones offer now.</td></tr>
   </table>
@@ -211,6 +226,9 @@
     var svg = node.querySelector('svg');
     svg.setAttribute('role', 'img');
     svg.setAttribute('aria-label', 'Sample QR code');
+  });
+  document.getElementById('f-photos').addEventListener('change', function (event) {
+    document.body.classList.toggle('photos', event.target.checked);
   });
   document.getElementById('controls').addEventListener('input', render);
   render();

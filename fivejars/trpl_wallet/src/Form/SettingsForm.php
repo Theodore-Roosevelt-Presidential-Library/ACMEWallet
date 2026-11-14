@@ -80,6 +80,34 @@ class SettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    $form['look'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Colors and images'),
+      '#description' => $this->t('One background color per kind of pass, from the brand palette. Colors are #rrggbb.'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+    foreach (['ticket' => $this->t('Tickets'), 'membership' => $this->t('Membership cards')] as $kind => $label) {
+      $form['look'][$kind] = ['#type' => 'fieldset', '#title' => $label];
+      foreach (['background' => $this->t('Background'), 'foreground' => $this->t('Text'), 'label' => $this->t('Labels')] as $key => $title) {
+        $form['look'][$kind][$key] = [
+          '#type' => 'color',
+          '#title' => $title,
+          '#default_value' => $config->get("colors.$kind.$key"),
+        ];
+      }
+      $form['look'][$kind]['logo_url'] = [
+        '#type' => 'url',
+        '#title' => $this->t('Google Wallet logo (square, shown in a circle)'),
+        '#default_value' => $config->get("google.logo_urls.$kind"),
+      ];
+      $form['look'][$kind]['hero_image_url'] = [
+        '#type' => 'url',
+        '#title' => $this->t('Google Wallet wide photo (optional, 1032 x 336)'),
+        '#default_value' => $config->get("google.hero_image_urls.$kind"),
+      ];
+    }
+
     $form['apple'] = [
       '#type' => 'details',
       '#title' => $this->t('Apple Wallet'),
@@ -89,9 +117,6 @@ class SettingsForm extends ConfigFormBase {
     $apple = [
       'pass_type_identifier' => $this->t('Pass Type ID'),
       'team_identifier' => $this->t('Team ID'),
-      'background_color' => $this->t('Background color, as rgb(r, g, b)'),
-      'foreground_color' => $this->t('Text color, as rgb(r, g, b)'),
-      'label_color' => $this->t('Label color, as rgb(r, g, b)'),
       'latitude' => $this->t('Entrance latitude'),
       'longitude' => $this->t('Entrance longitude'),
       'relevant_text' => $this->t('Lock screen text near the Library'),
@@ -113,9 +138,6 @@ class SettingsForm extends ConfigFormBase {
     ];
     $google = [
       'issuer_id' => $this->t('Issuer ID'),
-      'logo_url' => $this->t('Logo image URL'),
-      'hero_image_url' => $this->t('Wide image URL'),
-      'background_color' => $this->t('Background color, as #rrggbb'),
       'venue_name' => $this->t('Venue name'),
       'venue_address' => $this->t('Venue address'),
     ];
@@ -157,6 +179,13 @@ class SettingsForm extends ConfigFormBase {
       foreach ((array) $form_state->getValue($group) as $key => $value) {
         $config->set("$group.$key", trim((string) $value));
       }
+    }
+    foreach ((array) $form_state->getValue('look') as $kind => $values) {
+      foreach (['background', 'foreground', 'label'] as $key) {
+        $config->set("colors.$kind.$key", strtoupper((string) $values[$key]));
+      }
+      $config->set("google.logo_urls.$kind", trim((string) $values['logo_url']));
+      $config->set("google.hero_image_urls.$kind", trim((string) $values['hero_image_url']));
     }
     $config->save();
     parent::submitForm($form, $form_state);

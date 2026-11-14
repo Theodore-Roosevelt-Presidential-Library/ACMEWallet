@@ -23,15 +23,14 @@ class ApplePassBuilder {
    *   private_key_password?:string,
    *   wwdr_certificate_path:string,
    *   assets_dir:string,
-   *   background_color?:string,
-   *   foreground_color?:string,
-   *   label_color?:string,
+   *   colors?:array<string,array{background?:string,foreground?:string,label?:string}>,
    *   latitude?:float|null,
    *   longitude?:float|null,
    *   relevant_text?:string,
    *   terms_url?:string,
    * } $config
-   *   assets_dir holds "ticket" and "membership" folders of PNGs.
+   *   assets_dir holds "ticket" and "membership" folders of PNGs. colors is
+   *   keyed by pass kind, each value a #rrggbb hex color.
    */
   public function __construct(private readonly array $config) {}
 
@@ -70,9 +69,9 @@ class ApplePassBuilder {
       'description' => $pass->isTicket()
         ? $c['organization_name'] . ' ticket'
         : $c['organization_name'] . ' membership card',
-      'backgroundColor' => $c['background_color'] ?? 'rgb(255, 255, 255)',
-      'foregroundColor' => $c['foreground_color'] ?? 'rgb(0, 0, 0)',
-      'labelColor' => $c['label_color'] ?? 'rgb(90, 90, 90)',
+      'backgroundColor' => self::rgb($c['colors'][$pass->kind]['background'] ?? '', '#FFFFFF'),
+      'foregroundColor' => self::rgb($c['colors'][$pass->kind]['foreground'] ?? '', '#25282A'),
+      'labelColor' => self::rgb($c['colors'][$pass->kind]['label'] ?? '', '#25282A'),
       'barcodes' => [[
         'format' => 'PKBarcodeFormatQR',
         'message' => $pass->barcode,
@@ -155,6 +154,16 @@ class ApplePassBuilder {
       ];
     }
     return $json;
+  }
+
+  /**
+   * Apple wants "rgb(r, g, b)"; settings hold "#rrggbb".
+   */
+  private static function rgb(string $hex, string $fallback): string {
+    if (!preg_match('/^#[0-9a-fA-F]{6}$/', $hex)) {
+      $hex = $fallback;
+    }
+    return sprintf('rgb(%d, %d, %d)', hexdec(substr($hex, 1, 2)), hexdec(substr($hex, 3, 2)), hexdec(substr($hex, 5, 2)));
   }
 
   /**

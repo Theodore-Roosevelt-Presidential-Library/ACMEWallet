@@ -13,13 +13,20 @@ organization_name: 'Theodore Roosevelt Presidential Library'
 acme:
   base_url: 'https://api.acmeticketing.com'
   tenant_id: '613'
-# Colors are Night Sky, white and Sand from the brand tokens.
+# Brand colors, one background per pass kind (visual identity guide):
+# tickets Night Sky with Gray Sky labels, memberships Dark Forest with Sand.
+colors:
+  ticket:
+    background: '#092A4D'
+    foreground: '#FFFFFF'
+    label: '#99ADC5'
+  membership:
+    background: '#1B4532'
+    foreground: '#FFFFFF'
+    label: '#D1CCBD'
 apple:
   pass_type_identifier: ''
   team_identifier: ''
-  background_color: 'rgb(9, 42, 77)'
-  foreground_color: 'rgb(255, 255, 255)'
-  label_color: 'rgb(209, 204, 189)'
   # Leave empty until the Library's entrance coordinates are confirmed.
   latitude: ''
   longitude: ''
@@ -27,9 +34,15 @@ apple:
   terms_url: 'https://www.trlibrary.com/tickets/terms'
 google:
   issuer_id: ''
-  logo_url: ''
-  hero_image_url: ''
-  background_color: '#092A4D'
+  # Google shows the logo in a circle. Built by scripts/build_pass_art.py.
+  logo_urls:
+    ticket: 'https://wallet.labs.trlibrary.com/assets/img/google-logo-ticket.png'
+    membership: 'https://wallet.labs.trlibrary.com/assets/img/google-logo-membership.png'
+  # Optional wide photo (1032x336) across the pass. Use a cleared image from
+  # the Library's asset library.
+  hero_image_urls:
+    ticket: ''
+    membership: ''
   venue_name: 'Theodore Roosevelt Presidential Library'
   venue_address: ''
 limits:

@@ -177,6 +177,27 @@ final class CoreTest extends TestCase {
     $this->assertSame(46.5, $json['locations'][0]['latitude']);
   }
 
+  public function testTicketsAndMembershipsGetTheirOwnBrandColor(): void {
+    $builder = new ApplePassBuilder($this->appleConfig());
+    [$ticket, $card] = $this->samplePasses();
+    $this->assertSame('rgb(9, 42, 77)', $builder->passJson($ticket)['backgroundColor']);
+    $this->assertSame('rgb(153, 173, 197)', $builder->passJson($ticket)['labelColor']);
+    $this->assertSame('rgb(27, 69, 50)', $builder->passJson($card)['backgroundColor']);
+    $this->assertSame('rgb(209, 204, 189)', $builder->passJson($card)['labelColor']);
+
+    $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+    openssl_pkey_export($key, $pem);
+    $payload = (new GoogleWalletLink([
+      'issuer_id' => '1', 'service_account_email' => 'a@b', 'private_key' => $pem, 'issuer_name' => 'X',
+      'colors' => $this->appleConfig()['colors'],
+      'logo_urls' => ['ticket' => 'https://example.org/t.png', 'membership' => 'https://example.org/m.png'],
+    ]))->payload([$ticket, $card]);
+    $this->assertSame('#092A4D', $payload['eventTicketClasses'][0]['hexBackgroundColor']);
+    $this->assertSame('https://example.org/t.png', $payload['eventTicketClasses'][0]['logo']['sourceUri']['uri']);
+    $this->assertSame('#1B4532', $payload['genericObjects'][0]['hexBackgroundColor']);
+    $this->assertSame('https://example.org/m.png', $payload['genericObjects'][0]['logo']['sourceUri']['uri']);
+  }
+
   public function testGoogleLinkIsAVerifiableJwt(): void {
     $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
     openssl_pkey_export($key, $pem);
@@ -244,6 +265,10 @@ final class CoreTest extends TestCase {
       'assets_dir' => __DIR__ . '/../../../pass_assets',
       'latitude' => 46.5,
       'longitude' => -103.5,
+      'colors' => [
+        'ticket' => ['background' => '#092A4D', 'foreground' => '#FFFFFF', 'label' => '#99ADC5'],
+        'membership' => ['background' => '#1B4532', 'foreground' => '#FFFFFF', 'label' => '#D1CCBD'],
+      ],
     ];
   }
 

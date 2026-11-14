@@ -29,7 +29,7 @@ $settings['trpl_wallet'] = [
   // Google: the service account JSON key file for the Wallet issuer.
   'google_service_account_path' => '/path/outside/webroot/wallet/google-service-account.json',
 
-  // Optional: folder of final pass artwork. Defaults to the module's
-  // pass_assets folder, which ships with placeholders.
+  // Optional: a different folder of pass artwork. Defaults to the module's
+  // pass_assets folder.
   // 'pass_assets_dir' => '/path/to/pass_assets',
 ];

@@ -21,7 +21,10 @@ belongs in this repository or in its Actions secrets.
 - `index.html`: landing page with the lookup, in demo mode.
 - `embed.js`: the lookup as a drop-in. Usage is in the file header.
 - `preview/`: what the passes look like, with editable sample details.
-- `assets/`: styles, public images, and a vendored QR library (MIT).
+- `assets/`: styles, brand images, and a vendored QR library (MIT).
+- `scripts/build_pass_art.py`: rebuilds pass logos and icons from the
+  [brand kit](https://brand.labs.trlibrary.com). Tickets are Night Sky,
+  membership cards Dark Forest.
 
 Preview locally with `python3 -m http.server` from the repo root.
 
@@ -45,4 +48,4 @@ the security checklist, and the list of ACME details still to verify.
 - [ ] Apple Developer account, Pass Type ID and certificate.
 - [ ] Google Wallet issuer account and service account.
 - [ ] A real pass on an iPhone and an Android phone scans at the door.
-- [ ] Final pass artwork replaces the placeholders.
+- [ ] Marketing & Communications signs off on the pass artwork on a real phone.

@@ -29,6 +29,16 @@ trpl_wallet.settings:
         tenant_id:
           type: string
           label: 'Tenant ID'
+    colors:
+      type: mapping
+      label: 'Pass colors'
+      mapping:
+        ticket:
+          type: trpl_wallet.colors
+          label: 'Ticket colors'
+        membership:
+          type: trpl_wallet.colors
+          label: 'Membership colors'
     apple:
       type: mapping
       label: 'Apple Wallet'
@@ -39,15 +49,6 @@ trpl_wallet.settings:
         team_identifier:
           type: string
           label: 'Team ID'
-        background_color:
-          type: string
-          label: 'Background color'
-        foreground_color:
-          type: string
-          label: 'Text color'
-        label_color:
-          type: string
-          label: 'Label color'
         latitude:
           type: string
           label: 'Latitude'
@@ -67,15 +68,26 @@ trpl_wallet.settings:
         issuer_id:
           type: string
           label: 'Issuer ID'
-        logo_url:
-          type: string
-          label: 'Logo URL'
-        hero_image_url:
-          type: string
-          label: 'Hero image URL'
-        background_color:
-          type: string
-          label: 'Background color'
+        logo_urls:
+          type: mapping
+          label: 'Logo URLs'
+          mapping:
+            ticket:
+              type: string
+              label: 'Ticket logo URL'
+            membership:
+              type: string
+              label: 'Membership logo URL'
+        hero_image_urls:
+          type: mapping
+          label: 'Wide image URLs'
+          mapping:
+            ticket:
+              type: string
+              label: 'Ticket wide image URL'
+            membership:
+              type: string
+              label: 'Membership wide image URL'
         venue_name:
           type: label
           label: 'Venue name'
@@ -101,3 +113,17 @@ trpl_wallet.settings:
         link_token_seconds:
           type: integer
           label: 'Emailed link lifetime'
+
+trpl_wallet.colors:
+  type: mapping
+  label: 'Colors for one kind of pass'
+  mapping:
+    background:
+      type: color_hex
+      label: 'Background'
+    foreground:
+      type: color_hex
+      label: 'Text'
+    label:
+      type: color_hex
+      label: 'Labels'

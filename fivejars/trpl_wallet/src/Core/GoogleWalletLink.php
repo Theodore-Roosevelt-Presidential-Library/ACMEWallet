@@ -18,13 +18,14 @@ class GoogleWalletLink {
    *   private_key:string,
    *   issuer_name:string,
    *   origins?:string[],
-   *   logo_url?:string,
-   *   hero_image_url?:string,
-   *   background_color?:string,
+   *   logo_urls?:array<string,string>,
+   *   hero_image_urls?:array<string,string>,
+   *   colors?:array<string,array{background?:string}>,
    *   venue_name?:string,
    *   venue_address?:string,
    * } $config
-   *   private_key is the PEM from the service account JSON.
+   *   private_key is the PEM from the service account JSON. logo_urls,
+   *   hero_image_urls and colors are keyed by pass kind.
    */
   public function __construct(
     private readonly array $config,
@@ -116,16 +117,7 @@ class GoogleWalletLink {
         'address' => self::text($c['venue_address']),
       ];
     }
-    if (!empty($c['logo_url'])) {
-      $class['logo'] = self::image($c['logo_url'], $c['issuer_name']);
-    }
-    if (!empty($c['hero_image_url'])) {
-      $class['heroImage'] = self::image($c['hero_image_url'], $pass->title);
-    }
-    if (!empty($c['background_color'])) {
-      $class['hexBackgroundColor'] = $c['background_color'];
-    }
-    return $class;
+    return $class + $this->look($pass);
   }
 
   /**
@@ -184,16 +176,28 @@ class GoogleWalletLink {
       ];
       $object['validTimeInterval'] = ['end' => ['date' => $pass->expiresAt->format(\DateTimeInterface::ATOM)]];
     }
-    if (!empty($c['logo_url'])) {
-      $object['logo'] = self::image($c['logo_url'], $c['issuer_name']);
+    return $object + $this->look($pass);
+  }
+
+  /**
+   * Logo, wide image and background color for this kind of pass.
+   *
+   * @return array<string,mixed>
+   */
+  private function look(PassData $pass): array {
+    $c = $this->config;
+    $look = [];
+    if (!empty($c['logo_urls'][$pass->kind])) {
+      $look['logo'] = self::image($c['logo_urls'][$pass->kind], $c['issuer_name']);
     }
-    if (!empty($c['hero_image_url'])) {
-      $object['heroImage'] = self::image($c['hero_image_url'], $c['issuer_name']);
+    if (!empty($c['hero_image_urls'][$pass->kind])) {
+      $look['heroImage'] = self::image($c['hero_image_urls'][$pass->kind], $c['issuer_name']);
     }
-    if (!empty($c['background_color'])) {
-      $object['hexBackgroundColor'] = $c['background_color'];
+    $color = $c['colors'][$pass->kind]['background'] ?? '';
+    if (preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+      $look['hexBackgroundColor'] = $color;
     }
-    return $object;
+    return $look;
   }
 
   /**

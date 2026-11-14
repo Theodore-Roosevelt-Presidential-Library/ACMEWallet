@@ -27,26 +27,28 @@
   var CSS = [
     '.trw{font-family:"Frutiger Next",Arial,Helvetica,sans-serif;color:#25282A;max-width:460px;line-height:1.45;font-size:16px}',
     '.trw *{box-sizing:border-box}',
-    '.trw-tabs{display:flex;gap:4px;margin:0 0 16px;border-bottom:2px solid #D1CCBD}',
+    '.trw-tabs{display:flex;gap:4px;margin:0 0 16px;border-bottom:2px solid #cfd6df}',
     '.trw-tab{flex:1;padding:10px 8px;border:0;background:none;font:inherit;font-weight:700;color:#5b6166;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}',
     '.trw-tab[aria-selected="true"]{color:#092A4D;border-bottom-color:#092A4D}',
     '.trw label{display:block;font-weight:700;font-size:14px;margin:12px 0 4px}',
     '.trw input{width:100%;padding:12px;border:1px solid #8a9097;border-radius:4px;font:inherit;background:#fff;color:inherit}',
     '.trw input:focus,.trw button:focus-visible,.trw a:focus-visible{outline:3px solid #99ADC5;outline-offset:2px}',
     '.trw-hint{font-size:13px;color:#5b6166;margin:4px 0 0}',
-    '.trw-go{margin-top:16px;width:100%;padding:14px;border:0;border-radius:4px;background:#092A4D;color:#fff;font:inherit;font-weight:700;cursor:pointer}',
+    '.trw-go{margin-top:16px;width:100%;padding:14px;border:0;border-radius:4px;background:#E7805D;color:#25282A;font:inherit;font-weight:700;cursor:pointer}',
     '.trw-go[disabled]{opacity:.6;cursor:default}',
-    '.trw-msg{margin:16px 0 0;padding:12px 14px;border-radius:4px;background:#f1efe9;border-left:4px solid #092A4D}',
-    '.trw-msg.trw-bad{border-left-color:#E7805D}',
-    '.trw-pass{border:1px solid #D1CCBD;border-radius:6px;padding:14px;margin:12px 0 0;background:#fff}',
+    '.trw-msg{margin:16px 0 0;padding:12px 14px;border-radius:4px;background:#eef1f5;border-left:4px solid #99ADC5}',
+    '.trw-msg.trw-bad{border-left-color:#25282A}',
+    '.trw-pass{border:1px solid #cfd6df;border-left:6px solid #092A4D;border-radius:6px;padding:14px;margin:12px 0 0;background:#fff}',
+    '.trw-pass.trw-m{border-left-color:#1B4532}',
     '.trw-pass h3{margin:0;font-size:17px;color:#092A4D}',
+    '.trw-pass.trw-m h3{color:#1B4532}',
     '.trw-pass p{margin:2px 0 0;font-size:14px;color:#454a4f}',
     '.trw-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}',
-    '.trw-btn{display:inline-block;padding:11px 14px;border-radius:6px;background:#25282A;color:#fff;text-decoration:none;font-weight:700;font-size:15px}',
+    '.trw-btn{display:inline-block;padding:11px 14px;border-radius:6px;background:#E7805D;color:#25282A;text-decoration:none;font-weight:700;font-size:15px}',
     '.trw-btn.trw-off{background:#8a9097;pointer-events:none}',
     '.trw-all{margin-top:14px}',
     '.trw-again{margin-top:16px;background:none;border:0;padding:0;color:#092A4D;text-decoration:underline;font:inherit;cursor:pointer}',
-    '.trw-demo{font-size:13px;background:#F9D635;color:#25282A;padding:6px 10px;border-radius:4px;margin:0 0 12px;display:inline-block;font-weight:700}',
+    '.trw-demo{font-size:13px;background:#99ADC5;color:#25282A;padding:6px 10px;border-radius:4px;margin:0 0 12px;display:inline-block;font-weight:700}',
     '.trw-qr{margin-top:14px;font-size:14px;color:#454a4f}',
     '.trw-qr svg{display:block;margin:8px 0;background:#fff}'
   ].join('');
@@ -241,7 +243,7 @@
           where !== 'apple' ? walletButton('Add to Google Wallet', pass.google_url) : null
         ]);
         if (buttons.firstChild) anyLink = true;
-        root.appendChild(el('div', { 'class': 'trw-pass' }, [
+        root.appendChild(el('div', { 'class': 'trw-pass' + (pass.kind === 'membership' ? ' trw-m' : '') }, [
           el('h3', { text: pass.kind === 'ticket' ? pass.title : pass.title + ' membership' }),
           el('p', { text: line }),
           buttons

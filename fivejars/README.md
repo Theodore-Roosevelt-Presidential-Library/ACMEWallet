@@ -40,7 +40,7 @@ trpl_wallet/
   src/Http/          Guzzle adapter for the core.
   src/WalletFactory  Builds core objects from config and settings.php.
   config/            Default config and schema (no secrets).
-  pass_assets/       Placeholder pass images, per pass kind.
+  pass_assets/       Pass images built from the brand kit, per pass kind.
   tests/             PHPUnit tests for src/Core, with fake ACME data.
   settings.example.php
 ```
@@ -114,20 +114,34 @@ Every one of these lives in `AcmeClient` or `LookupService`.
 ACME publishes no rate limits and no webhooks that we could find. The module
 makes one to three ACME calls per lookup and per download.
 
-## Pass artwork
+## Pass artwork and colors
 
-`pass_assets/ticket` and `pass_assets/membership` hold placeholders. Final
-PNGs from the Library's design team replace them, same file names:
+Artwork comes from the Library's brand kit (brand.labs.trlibrary.com) and is
+built by `scripts/build_pass_art.py` at the repo root. Logos are scaled and
+placed on a brand background color, never recolored or redrawn.
 
-| File | Size (px) | Used by |
+| Kind | Background | Text | Labels |
+|---|---|---|---|
+| Ticket | Night Sky `#092A4D` | White | Gray Sky `#99ADC5` |
+| Membership card | Dark Forest `#1B4532` | White | Sand `#D1CCBD` |
+
+Colors live in config (`colors.ticket`, `colors.membership`) and on the
+settings form.
+
+| File in `pass_assets/<kind>/` | Size (px) | What |
 |---|---|---|
-| `icon.png`, `icon@2x.png`, `icon@3x.png` | 29, 58, 87 square | Apple, required |
-| `logo.png`, `logo@2x.png` | up to 160x50, 320x100 | Apple, top left of the pass |
-| `strip.png`, `strip@2x.png` | 375x98, 750x196 | Apple event ticket, optional band behind the title |
+| `icon.png`, `@2x`, `@3x` | 29, 58, 87 square | TR Brand Mark on the background color. Apple requires it |
+| `logo.png`, `@2x`, `@3x` | 50, 100, 150 tall | Stacked logo, white, transparent. Top left of the Apple pass |
+| `strip.png`, `@2x`, `@3x` | 375x98, 750x196, 1125x294 | Optional photo band on Apple tickets. Not supplied; add a cleared photo from the Library's asset library and it is picked up automatically |
 
-Google loads its images by URL (logo: square, at least 660x660; wide image:
-1032x336). Host them on the Pages site under `assets/img/` and put the URLs in
-settings.
+Google loads images by URL. The round logos are on the Pages site
+(`assets/img/google-logo-ticket.png`, `google-logo-membership.png`) and are
+already in the default config. The optional wide photo (1032x336) goes in
+`google.hero_image_urls`.
+
+Open with Marketing & Communications: sign-off on logo size on a real phone,
+the Dark Forest and Sand pairing, and the TR monogram app icon, which the
+brand kit lists as still to come. The TR Brand Mark stands in until then.
 
 ## Not in this build
 
