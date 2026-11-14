@@ -27,10 +27,12 @@ colors:
 apple:
   pass_type_identifier: ''
   team_identifier: ''
-  # Leave empty until the Library's entrance coordinates are confirmed.
-  latitude: ''
-  longitude: ''
-  relevant_text: ''
+  # The Library's map pin (3410 Chateau Road). Move to the entrance door if
+  # passes surface too early or too late on arrival.
+  latitude: '46.9174334'
+  longitude: '-103.5492931'
+  # The one line iPhone shows on the lock screen near the Library.
+  relevant_text: 'Your pass is ready to scan.'
   terms_url: 'https://www.trlibrary.com/tickets/terms'
 google:
   issuer_id: ''
@@ -44,7 +46,7 @@ google:
     ticket: ''
     membership: ''
   venue_name: 'Theodore Roosevelt Presidential Library'
-  venue_address: ''
+  venue_address: '3410 Chateau Road, Medora, North Dakota 58645'
 limits:
   # Lookups allowed per visitor IP address in each window.
   per_ip: 10
