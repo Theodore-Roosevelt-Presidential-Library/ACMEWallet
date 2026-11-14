@@ -21,7 +21,7 @@ a { color: var(--night-sky); }
 a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--gray-sky); outline-offset: 2px; }
 .top { background: var(--night-sky); color: #fff; padding: 28px 20px 24px; }
 .top .in, main { max-width: 1040px; margin: 0 auto; }
-.top .logo { display: block; height: 62px; width: auto; margin: 0 0 26px; }
+.top .logo { display: block; height: 48px; width: auto; max-width: 100%; margin: 0 0 26px; }
 .top p.kicker { font-family: var(--font-caption); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-sky); margin: 0 0 6px; }
 .top h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 9vw, 76px); line-height: .95; letter-spacing: .01em; text-transform: uppercase; margin: 0; }
 .top p.lede { max-width: 620px; margin: 12px 0 0; color: #e8ebf0; }
