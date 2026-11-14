@@ -1,0 +1,26 @@
+{
+  "id": 9000001,
+  "orderNumber": "100099999",
+  "email": "Sample.Visitor@example.org",
+  "firstName": "Sample",
+  "lastName": "Visitor",
+  "orderItems": [
+    {
+      "eventName": "General Admission",
+      "eventStartTime": "2027-07-04T13:00:00-06:00",
+      "ticketingTypeName": "Member Adult",
+      "ticketVos": [
+        { "id": 70000001, "uuid": "at000000-000000000000000000-aaaa1111", "email": "sample.visitor@example.org" },
+        { "id": 70000002, "uuid": "at111111-111111111111111111-bbbb2222", "email": "sample.visitor@example.org" }
+      ]
+    },
+    {
+      "eventName": "Guided Highlights Tour",
+      "eventStartTime": "2026-01-01T10:00:00-07:00",
+      "ticketingTypeName": "Adult",
+      "ticketVos": [
+        { "id": 70000003, "uuid": "at222222-222222222222222222-cccc3333" }
+      ]
+    }
+  ]
+}

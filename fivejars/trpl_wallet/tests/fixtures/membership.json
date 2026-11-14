@@ -1,0 +1,44 @@
+{
+  "id": 8000001,
+  "category": "Family",
+  "offeringName": "Family",
+  "membershipStanding": "Active",
+  "acmeMembershipNumber": "300000001",
+  "externalMembershipId": "",
+  "membershipStartDate": "2026-12-28T00:00:00-06:00",
+  "membershipExpirationDate": "2027-12-31T23:59:59-06:00",
+  "cardholders": [
+    {
+      "id": 8100001,
+      "name": "Sample Member",
+      "firstName": "Sample",
+      "lastName": "Member",
+      "email": "sample.member@example.org",
+      "barcode": "300000101",
+      "cardStatus": "Active",
+      "primaryCard": "true",
+      "membershipId": 8000001,
+      "expirationDate": "2027-12-31T23:59:59-06:00"
+    },
+    {
+      "id": 8100002,
+      "name": "Second Member",
+      "firstName": "Second",
+      "lastName": "Member",
+      "email": "second.member@example.org",
+      "barcode": "300000102",
+      "cardStatus": "Active",
+      "primaryCard": "false",
+      "membershipId": 8000001,
+      "expirationDate": "2027-12-31T23:59:59-06:00"
+    },
+    {
+      "id": 8100003,
+      "name": "Former Member",
+      "email": "former.member@example.org",
+      "barcode": "300000103",
+      "cardStatus": "Inactive",
+      "membershipId": 8000001
+    }
+  ]
+}

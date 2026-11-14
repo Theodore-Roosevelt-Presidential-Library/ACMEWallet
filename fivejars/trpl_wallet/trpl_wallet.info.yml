@@ -1,0 +1,6 @@
+name: 'TRPL Wallet'
+type: module
+description: 'Apple Wallet and Google Wallet passes for ACME Ticketing orders and memberships.'
+package: TRPL
+core_version_requirement: ^10.2 || ^11
+configure: trpl_wallet.settings

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wallet passes | Theodore Roosevelt Presidential Library Labs</title>
+<meta name="description" content="Add Theodore Roosevelt Presidential Library tickets and membership cards to Apple Wallet or Google Wallet.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="top">
+  <div class="in">
+    <p class="kicker">Theodore Roosevelt Presidential Library · Labs</p>
+    <h1>Tickets in your pocket</h1>
+    <p class="lede">Put Library tickets and membership cards in Apple Wallet or Google Wallet. They show up on the lock screen at arrival and scan at the door like the QR code in the confirmation email.</p>
+    <nav aria-label="Pages">
+      <a href="./" aria-current="page">Look up</a>
+      <a href="preview/">Pass preview</a>
+      <a href="https://github.com/Theodore-Roosevelt-Presidential-Library/ACMEWallet">Code</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="cols">
+    <section aria-labelledby="find">
+      <h2 id="find">Find your passes</h2>
+      <p class="note"><strong>Not live yet.</strong> This page runs in demo mode with sample passes until the lookup is switched on at www.trlibrary.com. Any number and email will work here.</p>
+      <div class="card">
+        <!-- Going live: remove data-demo. The embed then calls www.trlibrary.com. -->
+        <div data-trpl-wallet data-demo="true"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="how">
+      <h2 id="how">How it works</h2>
+      <ol class="steps">
+        <li>Enter the order number or membership ID, and the email used for it.</li>
+        <li>The Library's website checks both against the ticketing system.</li>
+        <li>On a match, each ticket or card gets an Add to Wallet button for the phone in hand.</li>
+      </ol>
+      <p>No account and no app to install. The pass carries the same code as the confirmation email, so either one works at the door.</p>
+
+      <h3>What lives where</h3>
+      <table class="plain">
+        <tr><th scope="row">This site</th><td>The lookup form, the buttons, the <a href="preview/">pass preview</a> and public images. No keys, no visitor data.</td></tr>
+        <tr><th scope="row">www.trlibrary.com</th><td>Checks the order, signs each pass and serves it. Every key stays here.</td></tr>
+        <tr><th scope="row">Ticketing system</th><td>The record of orders, tickets and memberships. Read only.</td></tr>
+      </table>
+
+      <h3>Put the lookup on any page</h3>
+<pre><code>&lt;div data-trpl-wallet&gt;&lt;/div&gt;
+&lt;script src="https://wallet.labs.trlibrary.com/assets/vendor/qrcode.js" defer&gt;&lt;/script&gt;
+&lt;script src="https://wallet.labs.trlibrary.com/embed.js" defer&gt;&lt;/script&gt;</code></pre>
+      <p>Add <code>data-kind="membership"</code> to open on the membership tab. The first script is optional; it draws the "continue on a phone" code for visitors on a computer.</p>
+    </section>
+  </div>
+
+  <footer>
+    A Theodore Roosevelt Presidential Library Labs project. Apple Wallet is a trademark of Apple Inc. Google Wallet is a trademark of Google LLC.
+  </footer>
+</main>
+
+<script src="assets/vendor/qrcode.js" defer></script>
+<script src="embed.js" defer></script>
+</body>
+</html>

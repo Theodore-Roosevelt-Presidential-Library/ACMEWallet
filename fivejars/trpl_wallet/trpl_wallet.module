@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Wallet passes for ACME Ticketing orders and memberships.
+ */
+
+/**
+ * Implements hook_mail().
+ *
+ * The one email this module sends: a one-time link to a visitor's passes,
+ * sent only to the address already on the order or membership.
+ */
+function trpl_wallet_mail(string $key, array &$message, array $params): void {
+  if ($key !== 'pass_link') {
+    return;
+  }
+  $what = !empty($params['is_ticket']) ? t('tickets') : t('membership cards');
+  $message['subject'] = t('Add your Library @what to your phone', ['@what' => $what]);
+  $message['body'][] = t('Here is the link to add your Theodore Roosevelt Presidential Library @what to Apple Wallet or Google Wallet:', ['@what' => $what]);
+  $message['body'][] = $params['link'];
+  $message['body'][] = t('The link works for @hours hours. Open it on the phone you will bring with you.', ['@hours' => $params['hours']]);
+  $message['body'][] = t('If you did not ask for this, you can ignore this email. Nothing has changed on your order.');
+}

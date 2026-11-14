@@ -1,0 +1,44 @@
+# Off until the secrets are installed and a test pass has scanned at the door.
+enabled: false
+# "email" sends a one-time link to the address on the order (recommended).
+# "instant" returns the passes straight to the browser.
+delivery_mode: email
+# Page that hosts the embed and lists the passes when opened with ?t=<token>.
+pass_page_url: 'https://wallet.labs.trlibrary.com/'
+# Sites allowed to call the lookup API from a browser.
+allowed_origins:
+  - 'https://wallet.labs.trlibrary.com'
+  - 'https://www.trlibrary.com'
+organization_name: 'Theodore Roosevelt Presidential Library'
+acme:
+  base_url: 'https://api.acmeticketing.com'
+  tenant_id: '613'
+# Colors are Night Sky, white and Sand from the brand tokens.
+apple:
+  pass_type_identifier: ''
+  team_identifier: ''
+  background_color: 'rgb(9, 42, 77)'
+  foreground_color: 'rgb(255, 255, 255)'
+  label_color: 'rgb(209, 204, 189)'
+  # Leave empty until the Library's entrance coordinates are confirmed.
+  latitude: ''
+  longitude: ''
+  relevant_text: ''
+  terms_url: 'https://www.trlibrary.com/tickets/terms'
+google:
+  issuer_id: ''
+  logo_url: ''
+  hero_image_url: ''
+  background_color: '#092A4D'
+  venue_name: 'Theodore Roosevelt Presidential Library'
+  venue_address: ''
+limits:
+  # Lookups allowed per visitor IP address in each window.
+  per_ip: 10
+  # Lookups allowed per order or membership number in each window.
+  per_number: 5
+  window_seconds: 900
+  # How long an "Add to Wallet" button stays valid after it is shown.
+  pass_token_seconds: 900
+  # How long an emailed link stays valid.
+  link_token_seconds: 86400

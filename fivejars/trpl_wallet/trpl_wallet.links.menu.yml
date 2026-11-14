@@ -1,0 +1,5 @@
+trpl_wallet.settings:
+  title: 'Wallet passes'
+  description: 'Apple Wallet and Google Wallet passes for ACME tickets and memberships.'
+  route_name: trpl_wallet.settings
+  parent: system.admin_config_services

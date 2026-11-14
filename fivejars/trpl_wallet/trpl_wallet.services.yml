@@ -1,0 +1,8 @@
+services:
+  trpl_wallet.http:
+    class: Drupal\trpl_wallet\Http\GuzzleHttpClient
+    arguments: ['@http_client']
+
+  trpl_wallet.factory:
+    class: Drupal\trpl_wallet\WalletFactory
+    arguments: ['@config.factory', '@settings', '@trpl_wallet.http', '@extension.list.module']

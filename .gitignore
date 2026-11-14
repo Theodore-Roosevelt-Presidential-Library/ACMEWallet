@@ -1,0 +1,12 @@
+.DS_Store
+_site/
+node_modules/
+
+# Secrets never belong in this repository. These patterns are a backstop.
+*.pem
+*.p12
+*.key
+*.pkpass
+.env
+.env.*
+*service-account*.json
