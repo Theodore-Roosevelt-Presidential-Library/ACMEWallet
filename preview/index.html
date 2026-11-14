@@ -49,9 +49,36 @@
   .pass.g .title { font-size: 24px; line-height: 1.15; margin: 14px 0 0; }
   .pass.g .sub { margin: 2px 0 0; color: var(--lbl); font-size: 14px; }
 
-  .lock { max-width: 340px; background: #dfe3e8; border-radius: 14px; padding: 12px 14px; font-family: var(--font-caption); font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
-  .lock img { width: 32px; height: 32px; border-radius: 7px; flex: none; display: block; }
-  .lock b { display: block; }
+  /* Lock screens. Generic phone frames; the notification is the part that matters. */
+  .phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px 24px; margin-top: 8px; }
+  .phone { --wall-a: #1d2733; --wall-b: #3b4a5c; width: 100%; max-width: 270px; aspect-ratio: 9 / 17.5; border-radius: 38px; padding: 9px; background: #101418; box-shadow: 0 12px 30px rgba(16, 20, 24, .3); }
+  .phone .screen { height: 100%; border-radius: 30px; background: linear-gradient(165deg, var(--wall-a), var(--wall-b)); color: #fff; font-family: var(--font-caption); display: flex; flex-direction: column; padding: 34px 10px 14px; overflow: hidden; }
+  .phone .day { text-align: center; font-size: 13px; margin: 0; opacity: .9; }
+  .phone .clock { text-align: center; font-size: 58px; line-height: 1.05; font-weight: 300; margin: 0; letter-spacing: -.02em; }
+  .phone .notice { margin-top: auto; background: rgba(255, 255, 255, .92); color: var(--dark-gray); border-radius: 18px; padding: 10px 11px; display: flex; gap: 9px; align-items: flex-start; font-size: 12.5px; line-height: 1.3; }
+  .phone .notice img { width: 34px; height: 34px; border-radius: 8px; flex: none; display: block; }
+  .phone .notice b { display: block; font-size: 12.5px; }
+  .phone .notice .src { display: block; font-size: 10.5px; color: #5b6166; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 1px; }
+  .phone .hint { text-align: center; font-size: 10.5px; opacity: .7; margin: 10px 0 0; }
+  .phone.android { border-radius: 30px; }
+  .phone.android .screen { border-radius: 23px; padding-top: 44px; }
+  .phone.android .day { text-align: left; padding-left: 8px; }
+  .phone.android .clock { text-align: left; padding-left: 6px; font-weight: 400; }
+  .phone.android .notice { margin-top: 22px; border-radius: 22px; }
+  .phone.android .notice img { border-radius: 50%; }
+  .phone.android .hint { margin-top: auto; }
+
+  /* Front and back. The button under each pass flips it. */
+  .pass .back { font-size: 14px; }
+  .pass .back-title { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--lbl); margin: 0 0 6px; }
+  .pass .back dl { margin: 0; }
+  .pass .back dl > div { padding: 11px 0; border-top: 1px solid rgba(255, 255, 255, .22); }
+  .pass .back dt { font-size: 12px; color: var(--lbl); }
+  .pass .back dd { margin: 2px 0 0; font-size: 16px; overflow-wrap: anywhere; }
+  .pass.turning { animation: turn .45s ease; }
+  @keyframes turn { 0% { transform: rotateY(0); } 50% { transform: rotateY(90deg); } 100% { transform: rotateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .pass.turning { animation: none; } }
+  button.flip { display: block; margin: 0 0 10px; padding: 8px 12px; border: 0; border-radius: 6px; background: var(--deep-orange); color: var(--dark-gray); font: inherit; font-weight: 700; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -91,6 +118,12 @@
         <div><label for="f-expires">Valid through</label><input id="f-expires" type="date" value="2027-12-31"></div>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>Lock screen</legend>
+      <div class="controls">
+        <div><label for="f-near">Message when near the Library (iPhone)</label><input id="f-near" value="Your pass is ready to scan." maxlength="80"></div>
+      </div>
+    </fieldset>
     <label class="toggle"><input type="checkbox" id="f-photos"> Show where a photo band can go</label>
   </form>
 
@@ -98,6 +131,7 @@
   <div class="gallery">
     <figure>
       <div class="pass" id="apple-ticket">
+        <div class="front">
         <div class="head"><img class="logo" src="../assets/img/trpl-logo-horizontal-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
         <div class="photo">Photo from the Library's asset library</div>
         <div class="primary"><p class="lbl">Admission</p><p class="val" data-f="event"></p></div>
@@ -110,12 +144,21 @@
           <div><p class="lbl">Name</p><p class="val" data-f="name"></p></div>
         </div>
         <div class="code"><div data-qr="ticket"></div><span data-f="ticket-code"></span></div>
+        </div>
+        <div class="back" hidden>
+          <p class="back-title">Back of the pass</p>
+          <dl>
+            <div><dt>Order number</dt><dd>100099999</dd></div>
+            <div><dt>Terms</dt><dd>trlibrary.com/tickets/terms</dd></div>
+          </dl>
+        </div>
       </div>
-      <figcaption><strong>Apple Wallet · ticket</strong>One pass per ticket. Expires the day after the visit. Order number and terms sit on the back.</figcaption>
+      <figcaption><button type="button" class="flip" data-flip="apple-ticket" aria-pressed="false">Show the back</button><strong>Apple Wallet · ticket</strong>One pass per ticket. Expires the day after the visit. Order number and terms sit on the back.</figcaption>
     </figure>
 
     <figure>
       <div class="pass g" id="google-ticket">
+        <div class="front">
         <div class="head"><img class="round" src="../assets/img/google-logo-ticket.png" alt=""><span>Theodore Roosevelt Presidential Library</span></div>
         <p class="title" data-f="event"></p>
         <p class="sub" data-f="date-time"></p>
@@ -125,23 +168,27 @@
         </div>
         <div class="code"><div data-qr="ticket"></div><span data-f="ticket-code"></span></div>
         <div class="photo">Photo from the Library's asset library</div>
+        </div>
+        <div class="back" hidden>
+          <p class="back-title">Details</p>
+          <dl>
+            <div><dt>Ticket number</dt><dd>aaaa1111</dd></div>
+            <div><dt>Ticket holder</dt><dd data-f="name"></dd></div>
+            <div><dt>Ticket type</dt><dd data-f="type"></dd></div>
+            <div><dt>Valid until</dt><dd data-f="ticket-expires"></dd></div>
+          </dl>
+        </div>
       </div>
-      <figcaption><strong>Google Wallet · ticket</strong>Several tickets from one order can be saved in one tap.</figcaption>
+      <figcaption><button type="button" class="flip" data-flip="google-ticket" aria-pressed="false">Show the back</button><strong>Google Wallet · ticket</strong>Several tickets from one order can be saved in one tap.</figcaption>
     </figure>
 
-    <figure>
-      <div class="lock" role="img" aria-label="Sample lock screen reminder">
-        <img src="../assets/img/google-logo-ticket.png" alt="">
-        <span><b>Theodore Roosevelt Presidential Library</b><span data-f="lock"></span></span>
-      </div>
-      <figcaption><strong>On the lock screen</strong>iPhone raises the ticket around the entry time and, once the entrance coordinates are set, on arrival. Android sends its own reminder about three hours ahead. Wording is the phone's, not the Library's.</figcaption>
-    </figure>
   </div>
 
   <h2>Membership cards</h2>
   <div class="gallery">
     <figure>
       <div class="pass m" id="apple-card">
+        <div class="front">
         <div class="head"><img class="logo" src="../assets/img/trpl-logo-horizontal-white.svg" alt="Theodore Roosevelt Presidential Library"></div>
         <div class="primary"><p class="lbl">Member</p><p class="val" data-f="member"></p></div>
         <div class="row">
@@ -149,12 +196,21 @@
           <div><p class="lbl">Valid through</p><p class="val" data-f="expires"></p></div>
         </div>
         <div class="code"><div data-qr="card"></div><span data-f="card-code"></span></div>
+        </div>
+        <div class="back" hidden>
+          <p class="back-title">Back of the pass</p>
+          <dl>
+            <div><dt>Membership number</dt><dd>300000001</dd></div>
+            <div><dt>Terms</dt><dd>trlibrary.com/tickets/terms</dd></div>
+          </dl>
+        </div>
       </div>
-      <figcaption><strong>Apple Wallet · membership</strong>One pass per cardholder, each with its own card number. Membership number sits on the back.</figcaption>
+      <figcaption><button type="button" class="flip" data-flip="apple-card" aria-pressed="false">Show the back</button><strong>Apple Wallet · membership</strong>One pass per cardholder, each with its own card number. Membership number sits on the back.</figcaption>
     </figure>
 
     <figure>
       <div class="pass g m" id="google-card">
+        <div class="front">
         <div class="head"><img class="round" src="../assets/img/google-logo-membership.png" alt=""><span>Theodore Roosevelt Presidential Library</span></div>
         <p class="sub" data-f="level" style="margin-top:14px"></p>
         <p class="title" data-f="member" style="margin-top:2px"></p>
@@ -164,13 +220,86 @@
         </div>
         <div class="code"><div data-qr="card"></div><span data-f="card-code"></span></div>
         <div class="photo">Photo from the Library's asset library</div>
+        </div>
+        <div class="back" hidden>
+          <p class="back-title">Details</p>
+          <dl>
+            <div><dt>Membership number</dt><dd>300000001</dd></div>
+            <div><dt>Valid through</dt><dd data-f="expires"></dd></div>
+          </dl>
+        </div>
       </div>
-      <figcaption><strong>Google Wallet · membership</strong>Stops showing as valid after the expiration date.</figcaption>
+      <figcaption><button type="button" class="flip" data-flip="google-card" aria-pressed="false">Show the back</button><strong>Google Wallet · membership</strong>Stops showing as valid after the expiration date.</figcaption>
+    </figure>
+  </div>
+
+  <h2>On the lock screen</h2>
+  <p class="note"><strong>Illustrative.</strong> The phone decides when a pass appears and writes most of the words. The Library controls the pass name, the times, the entrance location and, on iPhone, the one line shown near the Library.</p>
+  <div class="phones">
+    <figure>
+      <div class="phone" role="img" aria-label="Sample iPhone lock screen with a ticket">
+        <div class="screen">
+          <p class="day" data-f="lock-day"></p>
+          <p class="clock" data-f="lock-clock-arrive"></p>
+          <div class="notice">
+            <img src="../assets/img/google-logo-ticket.png" alt="">
+            <span><span class="src">Wallet</span><b>Theodore Roosevelt Presidential Library</b><span data-f="near"></span></span>
+          </div>
+          <p class="hint">Tap to open the ticket</p>
+        </div>
+      </div>
+      <figcaption><strong>iPhone · ticket, on arrival</strong>Appears near the entrance and around the entry time. One tap opens the code. Needs the entrance coordinates in settings.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone android" role="img" aria-label="Sample Android lock screen with a ticket reminder">
+        <div class="screen">
+          <p class="day" data-f="lock-day"></p>
+          <p class="clock" data-f="lock-clock-early"></p>
+          <div class="notice">
+            <img src="../assets/img/google-logo-ticket.png" alt="">
+            <span><span class="src">Google Wallet</span><b data-f="event"></b><span data-f="lock-android"></span></span>
+          </div>
+          <p class="hint">Tap to open the ticket</p>
+        </div>
+      </div>
+      <figcaption><strong>Android · ticket, three hours ahead</strong>Google sends this reminder itself, timed from the entry time on the pass.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone" style="--wall-a:#16261d;--wall-b:#35513f" role="img" aria-label="Sample iPhone lock screen with a membership card">
+        <div class="screen">
+          <p class="day">Saturday, May 15</p>
+          <p class="clock">10:02</p>
+          <div class="notice">
+            <img src="../assets/img/google-logo-membership.png" alt="">
+            <span><span class="src">Wallet</span><b>Theodore Roosevelt Presidential Library</b><span data-f="near"></span></span>
+          </div>
+          <p class="hint">Tap to open the card</p>
+        </div>
+      </div>
+      <figcaption><strong>iPhone · membership, on arrival</strong>Membership cards have no entry time, so they appear by location only, on any visit.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone android" style="--wall-a:#16261d;--wall-b:#35513f" role="img" aria-label="Sample Android lock screen with a membership expiry reminder">
+        <div class="screen">
+          <p class="day" data-f="lock-expiry-day"></p>
+          <p class="clock">9:00</p>
+          <div class="notice">
+            <img src="../assets/img/google-logo-membership.png" alt="">
+            <span><span class="src">Google Wallet</span><b>Theodore Roosevelt Presidential Library</b><span data-f="lock-expiry"></span></span>
+          </div>
+          <p class="hint">Tap to open the card</p>
+        </div>
+      </div>
+      <figcaption><strong>Android · membership, before it ends</strong>Google's documentation lists a reminder 48 hours before a pass's end date. Not yet seen on a real card; to confirm in testing.</figcaption>
     </figure>
   </div>
 
   <h2>What is still open</h2>
   <table class="plain">
+    <tr><th scope="row">Back of the pass</th><td>Holds the order or membership number and the terms link today. Hours, directions, a contact line or a renewal link could be added.</td></tr>
     <tr><th scope="row">App icon</th><td>The TR Brand Mark stands in on the lock screen and in Google's round logo until the TR monogram app icon is supplied.</td></tr>
     <tr><th scope="row">Photos</th><td>None yet. A photo band is optional on tickets (Apple and Google) and on Google membership cards. It needs a cleared image from the Library's asset library.</td></tr>
     <tr><th scope="row">Sign-off</th><td>Logo sizes on a phone are small. Marketing &amp; Communications should approve the logo choice and the Dark Forest and Sand pairing on a real device.</td></tr>
@@ -213,10 +342,20 @@
     set('date', date);
     set('time', time);
     set('date-time', [date, time].filter(Boolean).join(' · '));
-    set('lock', (v('f-event') || 'Admission') + (time ? ' · Entry at ' + time : ''));
+    var day = function (d) { return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); };
+    var clock = function (d) { return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M$/, ''); };
+    set('near', v('f-near'));
+    set('lock-day', okWhen ? day(when) : '');
+    set('lock-clock-arrive', okWhen ? clock(new Date(when.getTime() - 10 * 60000)) : '');
+    set('lock-clock-early', okWhen ? clock(new Date(when.getTime() - 3 * 3600000)) : '');
+    set('lock-android', time ? 'Today at ' + time + ' · Theodore Roosevelt Presidential Library' : '');
+    var okExp = !isNaN(expires);
+    set('lock-expiry-day', okExp ? day(new Date(expires.getTime() - 2 * 86400000)) : '');
+    set('lock-expiry', okExp ? (v('f-level') ? v('f-level') + ' membership' : 'Membership') + ' ends ' + expires.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '');
     set('member', v('f-member') || 'Member');
     set('level', v('f-level'));
     set('expires', isNaN(expires) ? '' : expires.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+    set('ticket-expires', okWhen ? new Date(when.getTime() + 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '');
     set('ticket-code', CODES.ticket.split('-').pop());
     set('card-code', CODES.card);
   }
@@ -227,6 +366,28 @@
     svg.setAttribute('role', 'img');
     svg.setAttribute('aria-label', 'Sample QR code');
   });
+  // Flip a pass between front and back. The swap happens at the midpoint of
+  // the turn, and the card keeps its height so the page does not jump.
+  document.querySelectorAll('button.flip').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var pass = document.getElementById(button.getAttribute('data-flip'));
+      var front = pass.querySelector('.front');
+      var back = pass.querySelector('.back');
+      var toBack = back.hidden;
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (toBack) pass.style.minHeight = pass.offsetHeight + 'px';
+      pass.classList.remove('turning');
+      void pass.offsetWidth;
+      pass.classList.add('turning');
+      window.setTimeout(function () {
+        front.hidden = toBack;
+        back.hidden = !toBack;
+      }, still ? 0 : 220);
+      button.setAttribute('aria-pressed', String(toBack));
+      button.textContent = toBack ? 'Show the front' : 'Show the back';
+    });
+  });
+
   document.getElementById('f-photos').addEventListener('change', function (event) {
     document.body.classList.toggle('photos', event.target.checked);
   });
