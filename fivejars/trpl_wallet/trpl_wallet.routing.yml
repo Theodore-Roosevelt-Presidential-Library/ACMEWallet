@@ -1,0 +1,52 @@
+# Every public route sets no_cache so neither Drupal's page cache nor a CDN
+# that honours Cache-Control can hand one visitor another visitor's pass.
+
+trpl_wallet.lookup:
+  path: '/wallet/api/lookup'
+  defaults:
+    _controller: '\Drupal\trpl_wallet\Controller\WalletController::lookup'
+  methods: [POST, OPTIONS]
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+trpl_wallet.passes:
+  path: '/wallet/api/passes'
+  defaults:
+    _controller: '\Drupal\trpl_wallet\Controller\WalletController::passes'
+  methods: [GET, OPTIONS]
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+trpl_wallet.apple:
+  path: '/wallet/apple/{token}'
+  defaults:
+    _controller: '\Drupal\trpl_wallet\Controller\WalletController::apple'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+    token: '[A-Za-z0-9_\-\.]+'
+  options:
+    no_cache: 'TRUE'
+
+trpl_wallet.google:
+  path: '/wallet/google/{token}'
+  defaults:
+    _controller: '\Drupal\trpl_wallet\Controller\WalletController::google'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+    token: '[A-Za-z0-9_\-\.]+'
+  options:
+    no_cache: 'TRUE'
+
+trpl_wallet.settings:
+  path: '/admin/config/services/trpl-wallet'
+  defaults:
+    _form: '\Drupal\trpl_wallet\Form\SettingsForm'
+    _title: 'Wallet passes'
+  requirements:
+    _permission: 'administer trpl wallet'

@@ -1,0 +1,4 @@
+administer trpl wallet:
+  title: 'Administer wallet passes'
+  description: 'Change wallet pass settings and turn the feature on or off.'
+  restrict access: true

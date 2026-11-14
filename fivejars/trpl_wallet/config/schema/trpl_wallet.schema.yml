@@ -1,0 +1,129 @@
+trpl_wallet.settings:
+  type: config_object
+  label: 'Wallet pass settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled'
+    delivery_mode:
+      type: string
+      label: 'Delivery mode'
+    pass_page_url:
+      type: uri
+      label: 'Pass page URL'
+    allowed_origins:
+      type: sequence
+      label: 'Allowed origins'
+      sequence:
+        type: string
+    organization_name:
+      type: label
+      label: 'Organization name'
+    acme:
+      type: mapping
+      label: 'ACME'
+      mapping:
+        base_url:
+          type: uri
+          label: 'API base URL'
+        tenant_id:
+          type: string
+          label: 'Tenant ID'
+    colors:
+      type: mapping
+      label: 'Pass colors'
+      mapping:
+        ticket:
+          type: trpl_wallet.colors
+          label: 'Ticket colors'
+        membership:
+          type: trpl_wallet.colors
+          label: 'Membership colors'
+    apple:
+      type: mapping
+      label: 'Apple Wallet'
+      mapping:
+        pass_type_identifier:
+          type: string
+          label: 'Pass Type ID'
+        team_identifier:
+          type: string
+          label: 'Team ID'
+        latitude:
+          type: string
+          label: 'Latitude'
+        longitude:
+          type: string
+          label: 'Longitude'
+        relevant_text:
+          type: label
+          label: 'Lock screen text'
+        terms_url:
+          type: string
+          label: 'Terms URL'
+    google:
+      type: mapping
+      label: 'Google Wallet'
+      mapping:
+        issuer_id:
+          type: string
+          label: 'Issuer ID'
+        logo_urls:
+          type: mapping
+          label: 'Logo URLs'
+          mapping:
+            ticket:
+              type: string
+              label: 'Ticket logo URL'
+            membership:
+              type: string
+              label: 'Membership logo URL'
+        hero_image_urls:
+          type: mapping
+          label: 'Wide image URLs'
+          mapping:
+            ticket:
+              type: string
+              label: 'Ticket wide image URL'
+            membership:
+              type: string
+              label: 'Membership wide image URL'
+        venue_name:
+          type: label
+          label: 'Venue name'
+        venue_address:
+          type: label
+          label: 'Venue address'
+    limits:
+      type: mapping
+      label: 'Limits'
+      mapping:
+        per_ip:
+          type: integer
+          label: 'Lookups per IP'
+        per_number:
+          type: integer
+          label: 'Lookups per number'
+        window_seconds:
+          type: integer
+          label: 'Window in seconds'
+        pass_token_seconds:
+          type: integer
+          label: 'Pass link lifetime'
+        link_token_seconds:
+          type: integer
+          label: 'Emailed link lifetime'
+
+trpl_wallet.colors:
+  type: mapping
+  label: 'Colors for one kind of pass'
+  mapping:
+    background:
+      type: color_hex
+      label: 'Background'
+    foreground:
+      type: color_hex
+      label: 'Text'
+    label:
+      type: color_hex
+      label: 'Labels'
