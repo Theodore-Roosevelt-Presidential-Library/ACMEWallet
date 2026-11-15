@@ -14,7 +14,7 @@ The reference implementation is
 |---|---|---|---|
 | `/wallet/api/lookup` | POST | JSON | The form, when a visitor submits it |
 | `/wallet/api/passes?t=<token>` | GET | JSON | The form, when opened from an emailed link |
-| `/wallet/apple/<token>` | GET | A signed `.pkpass` file | The visitor's phone, from the Apple badge |
+| `/wallet/apple/<token>` | GET | A signed `.pkpass` file, or a `.pkpasses` bundle of several | The visitor's phone, from the Apple badge |
 | `/wallet/google/<token>` | GET | A 302 redirect to Google | The visitor's phone, from the Google badge |
 
 Both `/wallet/api/*` routes also answer `OPTIONS` with an empty `204` for the
@@ -67,7 +67,7 @@ Content-Type: application/json
 | HTTP | Body | When | What the form shows |
 |---|---|---|---|
 | 200 | `{"status":"sent"}` | Email mode (the default). Returned **whether or not anything matched**, so the endpoint cannot be used to test which orders or emails exist. If there was a match, an email with a one-time link has been sent. | "If that number and email match, a link is on its way." |
-| 200 | `{"status":"ok", "passes":[…], "google_all_url":…}` | Instant mode, with a match. See [the pass list](#the-pass-list). | The passes with their badges |
+| 200 | `{"status":"ok", "passes":[…], "apple_all_url":…, "google_all_url":…}` | Instant mode, with a match. See [the pass list](#the-pass-list). | The passes with their badges |
 | 200 | `{"status":"not_found"}` | Instant mode, no match, or everything on the order is in the past or inactive. | "No match" message |
 | 400 | `{"status":"invalid"}` | Missing or malformed `kind`, `number` or `email`, or a body that is not JSON. | "No match" message |
 | 429 | `{"status":"slow_down"}` | Rate limit reached: 10 lookups per IP address or 5 per order number in 15 minutes (configurable). | "Too many tries. Wait about 15 minutes." |
@@ -83,7 +83,7 @@ the form passes it straight through.
 
 | HTTP | Body | When |
 |---|---|---|
-| 200 | `{"status":"ok", "passes":[…], "google_all_url":…}` | The token is valid and at least one pass is still current. |
+| 200 | `{"status":"ok", "passes":[…], "apple_all_url":…, "google_all_url":…}` | The token is valid and at least one pass is still current. |
 | 410 | `{"status":"expired"}` | The token is missing, altered, older than 24 hours, or nothing behind it is current any more. |
 | 503 | `{"status":"unavailable"}` | Switched off or not configured. |
 
@@ -116,6 +116,7 @@ Returned by both JSON routes when `status` is `ok`.
       "google_url": "https://www.trlibrary.com/wallet/google/eyJy…"
     }
   ],
+  "apple_all_url": "https://www.trlibrary.com/wallet/apple/eyJy…",
   "google_all_url": "https://www.trlibrary.com/wallet/google/eyJy…"
 }
 ```
@@ -133,7 +134,8 @@ only; both are shown here for reference.
 | `expires` | string or null | ISO 8601 with offset. The end of the day after the visit for a ticket; the membership end date for a card. |
 | `apple_url` | string or null | Absolute link to the Apple route. `null` until the Apple certificate is installed. |
 | `google_url` | string or null | Absolute link to the Google route. `null` until the Google key is installed. |
-| `google_all_url` | string or null | One link that saves every pass to Google Wallet at once. `null` when there is only one pass or Google is not set up. Apple has no equivalent. |
+| `apple_all_url` | string or null | One link to a bundle that adds every pass to Apple Wallet in one step. `null` when there is only one pass, more than ten, or Apple is not set up. The form shows it only in Safari on iPhone. |
+| `google_all_url` | string or null | One link that saves every pass to Google Wallet at once. `null` when there is only one pass or Google is not set up. |
 
 Rules that matter:
 
@@ -151,15 +153,28 @@ Rules that matter:
 
 ## GET /wallet/apple/&lt;token&gt;
 
+The same route serves one pass or several, depending on what the token names.
+
 | HTTP | Response | When |
 |---|---|---|
-| 200 | The pass file. `Content-Type: application/vnd.apple.pkpass`, `Content-Disposition: attachment; filename="trlibrary-ticket.pkpass"` (or `trlibrary-membership.pkpass`), `Content-Length` set. | The token is valid and names exactly one pass. |
-| 410 | Plain text: "This link has expired. Please look up your order again." | Token missing, altered, expired, or naming more than one pass. |
+| 200 | One pass. `Content-Type: application/vnd.apple.pkpass`, `Content-Disposition: attachment; filename="trlibrary-ticket.pkpass"` (or `trlibrary-membership.pkpass`), `Content-Length` set. | The token names exactly one pass. This is `apple_url`. |
+| 200 | A bundle. `Content-Type: application/vnd.apple.pkpasses`, `Content-Disposition: attachment; filename="trlibrary-tickets.pkpasses"` (or `trlibrary-memberships.pkpasses`), `Content-Length` set. | The token names two to ten passes. This is `apple_all_url`. |
+| 410 | Plain text: "This link has expired. Please look up your order again." | Token missing, altered, expired, or naming more than ten passes. |
 | 503 | Plain text: "Wallet passes are not available right now." | Switched off, certificate missing, or signing failed. |
 
-The content type must be exact. Safari on iPhone opens the Add to Wallet sheet
-only for `application/vnd.apple.pkpass`; anything else downloads a file the
+Both content types must be exact. Safari on iPhone opens the Add to Wallet
+sheet only for `application/vnd.apple.pkpass`, and the "Add All" sheet only
+for `application/vnd.apple.pkpasses`; anything else downloads a file the
 visitor cannot use.
+
+A bundle is a plain zip whose entries are complete, individually signed
+`.pkpass` files, one per ticket or card. It is not signed again as a whole.
+Safari accepts ten passes at most, and other iPhone browsers do not open
+bundles at all, so the form offers the bundle only in Safari and always keeps
+the badge on each pass.
+
+Tickets from one order share a `groupingIdentifier` in `pass.json`, so Wallet
+stacks them as one group.
 
 ## GET /wallet/google/&lt;token&gt;
 

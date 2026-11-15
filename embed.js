@@ -87,6 +87,11 @@
     return 'desktop';
   }
 
+  // Chrome, Firefox and Edge on iPhone name themselves in the user agent.
+  function safari() {
+    return !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/.test(navigator.userAgent || '');
+  }
+
   function el(tag, attrs, children) {
     var node = document.createElement(tag);
     Object.keys(attrs || {}).forEach(function (key) {
@@ -118,6 +123,7 @@
     if (kind === 'membership') {
       return {
         status: 'ok',
+        apple_all_url: preview,
         google_all_url: preview,
         passes: [
           { kind: 'membership', title: 'Family', type: 'Member', holder: 'Sample Member', expires: nextYear.toISOString(), apple_url: preview, google_url: preview },
@@ -127,6 +133,7 @@
     }
     return {
       status: 'ok',
+      apple_all_url: preview,
       google_all_url: preview,
       passes: [
         { kind: 'ticket', title: 'General Admission', type: 'Adult', holder: 'Sample Visitor', starts: soon.toISOString(), apple_url: preview, google_url: preview },
@@ -271,6 +278,14 @@
           buttons
         ]));
       });
+      // One file holding every pass. Only Safari on iPhone opens it as an
+      // "Add All" sheet; other iPhone browsers would just download a file.
+      if (where === 'apple' && safari() && data.apple_all_url && passes.length > 1) {
+        root.appendChild(el('div', { 'class': 'trw-all' }, [
+          el('p', { text: 'Or save all ' + passes.length + ' at once:' }),
+          walletButton('apple', data.apple_all_url, 'Add all ' + passes.length + ' to Apple Wallet')
+        ]));
+      }
       if (where !== 'apple' && data.google_all_url && passes.length > 1) {
         root.appendChild(el('div', { 'class': 'trw-all' }, [
           el('p', { text: 'Or save all ' + passes.length + ' at once:' }),

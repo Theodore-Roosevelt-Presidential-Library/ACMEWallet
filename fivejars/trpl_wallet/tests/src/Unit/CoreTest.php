@@ -171,6 +171,51 @@ final class CoreTest extends TestCase {
     }
   }
 
+  public function testSeveralTicketsBundleIntoOneFile(): void {
+    $builder = new ApplePassBuilder($this->appleConfig());
+    $tickets = $this->lookup->ticketsForOrder('100099999', 'sample.visitor@example.org');
+    $this->assertGreaterThan(1, count($tickets));
+
+    $path = self::$dir . '/tickets.pkpasses';
+    file_put_contents($path, $builder->bundle($tickets));
+    $zip = new \ZipArchive();
+    $this->assertTrue($zip->open($path));
+    $this->assertSame(count($tickets), $zip->numFiles);
+
+    // Every entry is a complete signed pass with its own barcode, and all of
+    // them carry the same grouping so Wallet stacks them.
+    $barcodes = [];
+    $groups = [];
+    for ($i = 0; $i < $zip->numFiles; $i++) {
+      $this->assertStringEndsWith('.pkpass', $zip->getNameIndex($i));
+      $inner = self::$dir . '/inner-' . $i . '.pkpass';
+      file_put_contents($inner, $zip->getFromIndex($i));
+      $pass = new \ZipArchive();
+      $this->assertTrue($pass->open($inner));
+      $this->assertNotFalse($pass->getFromName('signature'));
+      $json = json_decode($pass->getFromName('pass.json'), TRUE);
+      $barcodes[] = $json['barcodes'][0]['message'];
+      $groups[] = $json['groupingIdentifier'] ?? NULL;
+    }
+    $this->assertSame(array_map(static fn($t) => $t->barcode, $tickets), $barcodes);
+    $this->assertCount(count($tickets), array_unique($barcodes));
+    $this->assertSame(['order-100099999'], array_values(array_unique($groups)));
+  }
+
+  public function testBundleRefusesOnePassOrMoreThanTen(): void {
+    $builder = new ApplePassBuilder($this->appleConfig());
+    $ticket = $this->samplePasses()[0];
+    foreach ([[$ticket], array_fill(0, 11, $ticket)] as $passes) {
+      try {
+        $builder->bundle($passes);
+        $this->fail('Expected the bundle to be refused.');
+      }
+      catch (\InvalidArgumentException $e) {
+        $this->addToAssertionCount(1);
+      }
+    }
+  }
+
   public function testTicketPassCarriesLockScreenRelevance(): void {
     $json = (new ApplePassBuilder($this->appleConfig()))->passJson($this->samplePasses()[0]);
     $this->assertSame('2027-07-04T13:00:00-06:00', $json['relevantDate']);
