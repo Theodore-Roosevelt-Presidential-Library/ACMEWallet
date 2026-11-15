@@ -152,11 +152,6 @@ brand kit lists as still to come. The TR Brand Mark stands in until then.
   of device registrations and an APNs call; Google needs REST calls to patch
   objects. Planned as the next phase. Until then a pass is correct when added
   and each Apple pass carries an expiry.
-- **Apple's badge file.** The embed and the snippets in `snippets/` use the
-  official badge artwork. Google's is in `assets/badges/google/`. Apple's is
-  released only under its Wallet Marketing Agreement, so it is added once the
-  Library has accepted that; until then the Apple link shows as plain text.
-  See `assets/badges/NOTICE.md`.
 - **Existing libraries.** The signer is about 250 lines with no dependencies.
   If you would rather maintain a library, `pkpass/pkpass` (Apple) and
   `firebase/php-jwt` (Google) replace `ApplePassBuilder::sign()`/`zip()` and

@@ -25,17 +25,22 @@ trademark of Google LLC.
 
 ## Apple (`apple/`)
 
-"Add to Apple Wallet" badge. Apple releases this artwork only under its
-Wallet Marketing Agreement, which a member of the Apple Developer Program
-accepts on the download page:
+"Add to Apple Wallet" badge, English (US and UK), from Apple's badge download
+dated 2021-10-14. The Library accepted Apple's Wallet Marketing Agreement on
+the download page on 2026-11-14:
 https://developer.apple.com/wallet/add-to-apple-wallet-guidelines/
 
-The license is limited and non-transferable, and lasts only while the Library
-is a member of the Apple Developer Program. The embed looks for
-`apple/add-to-apple-wallet.svg`; until that file is present it shows a plain
-text link instead.
+| File | Use |
+|------|-----|
+| `add-to-apple-wallet.svg` | Web pages. Apple's `US-UK_Add_to_Apple_Wallet_RGB_101421.svg`, renamed, contents unchanged. |
+| `add-to-apple-wallet.png` | Email only. The same SVG rendered at three times size (456 x 144 px), not redrawn. |
+
+The license is limited and non-transferable, covers only the Library's own
+passes, and lasts only while the Library is a member of the Apple Developer
+Program. If that membership ends, remove these two files.
 
 Apple's rules in brief: use only Apple's artwork, keep clear space of one
 tenth of the badge height, keep it secondary to the page's own message, and
-show it only beside a pass that works in Apple Wallet. Apple Wallet is a
-trademark of Apple Inc.
+show it only beside a pass that works in Apple Wallet. Other languages are in
+Apple's download; do not translate the badge. Apple Wallet is a trademark of
+Apple Inc.
