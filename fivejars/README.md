@@ -29,6 +29,8 @@ email). Both values must match the ACME record.
 Nothing is stored. Tokens are HMAC-signed, expire, and carry only ACME ids.
 Each download re-reads ACME, so a refunded ticket or lapsed card stops working.
 
+The exact responses each route must return are in [`API.md`](API.md).
+
 ## Layout
 
 ```
