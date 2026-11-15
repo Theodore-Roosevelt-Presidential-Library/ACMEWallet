@@ -43,15 +43,27 @@
     '.trw-pass h3{margin:0;font-size:17px;color:#092A4D}',
     '.trw-pass.trw-m h3{color:#1B4532}',
     '.trw-pass p{margin:2px 0 0;font-size:14px;color:#454a4f}',
-    '.trw-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}',
+    '.trw-btns{display:flex;flex-wrap:wrap;align-items:center;gap:0;margin:6px 0 -8px -8px}',
     '.trw-btn{display:inline-block;padding:11px 14px;border-radius:6px;background:#E7805D;color:#25282A;text-decoration:none;font-weight:700;font-size:15px}',
     '.trw-btn.trw-off{background:#8a9097;pointer-events:none}',
+    '.trw-badge{display:inline-block;padding:8px;line-height:0;border-radius:8px}',
+    '.trw-badge img{display:block;height:48px;width:auto}',
+    '.trw-badge:focus-visible{outline:3px solid #092A4D;outline-offset:-4px}',
+    '.trw-btns .trw-btn,.trw-all .trw-btn{margin:8px}',
+    '.trw-all p{margin:0;font-size:14px;color:#454a4f}',
+    '.trw-all .trw-badge{margin-left:-8px}',
     '.trw-all{margin-top:14px}',
     '.trw-again{margin-top:16px;background:none;border:0;padding:0;color:#092A4D;text-decoration:underline;font:inherit;cursor:pointer}',
     '.trw-demo{font-size:13px;background:#99ADC5;color:#25282A;padding:6px 10px;border-radius:4px;margin:0 0 12px;display:inline-block;font-weight:700}',
     '.trw-qr{margin-top:14px;font-size:14px;color:#454a4f}',
     '.trw-qr svg{display:block;margin:8px 0;background:#fff}'
   ].join('');
+
+  // Badge artwork, served from this site. See assets/badges/NOTICE.md.
+  var BADGES = {
+    apple: { src: 'assets/badges/apple/add-to-apple-wallet.svg', alt: 'Add to Apple Wallet' },
+    google: { src: 'assets/badges/google/enUS_add_to_google_wallet_wallet-button.svg', alt: 'Add to Google Wallet' }
+  };
 
   var COPY = {
     order: {
@@ -222,10 +234,20 @@
       return button;
     }
 
-    function walletButton(label, url) {
-      return url
-        ? el('a', { 'class': 'trw-btn', href: url, rel: 'noopener', text: label })
-        : null;
+    // Official artwork only. Apple and Google do not allow home-made
+    // "Add to Wallet" buttons, so each link shows the vendor's own badge,
+    // unaltered. If a badge file is missing the link falls back to plain text.
+    function walletButton(wallet, url, label) {
+      if (!url) return null;
+      var badge = BADGES[wallet];
+      var link = el('a', { 'class': 'trw-badge', href: url, rel: 'noopener', 'aria-label': label || badge.alt });
+      var img = el('img', { src: BASE + badge.src, alt: label || badge.alt, height: '48' });
+      img.addEventListener('error', function () {
+        link.className = 'trw-btn';
+        link.textContent = label || badge.alt;
+      });
+      link.appendChild(img);
+      return link;
     }
 
     function showPasses(data) {
@@ -239,8 +261,8 @@
           ? [pass.type, when(pass.starts), clock(pass.starts)].filter(Boolean).join(' · ')
           : [pass.holder, pass.expires ? 'Valid through ' + when(pass.expires) : ''].filter(Boolean).join(' · ');
         var buttons = el('div', { 'class': 'trw-btns' }, [
-          where !== 'google' ? walletButton('Add to Apple Wallet', pass.apple_url) : null,
-          where !== 'apple' ? walletButton('Add to Google Wallet', pass.google_url) : null
+          where !== 'google' ? walletButton('apple', pass.apple_url) : null,
+          where !== 'apple' ? walletButton('google', pass.google_url) : null
         ]);
         if (buttons.firstChild) anyLink = true;
         root.appendChild(el('div', { 'class': 'trw-pass' + (pass.kind === 'membership' ? ' trw-m' : '') }, [
@@ -250,7 +272,10 @@
         ]));
       });
       if (where !== 'apple' && data.google_all_url && passes.length > 1) {
-        root.appendChild(el('div', { 'class': 'trw-all' }, [walletButton('Add all ' + passes.length + ' to Google Wallet', data.google_all_url)]));
+        root.appendChild(el('div', { 'class': 'trw-all' }, [
+          el('p', { text: 'Or save all ' + passes.length + ' at once:' }),
+          walletButton('google', data.google_all_url, 'Add all ' + passes.length + ' to Google Wallet')
+        ]));
       }
       if (!anyLink) {
         root.appendChild(message('Passes for this phone are not switched on yet. The QR codes in the confirmation email still work at the door.', true));
