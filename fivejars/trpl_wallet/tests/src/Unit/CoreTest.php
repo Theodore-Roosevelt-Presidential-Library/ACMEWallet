@@ -48,13 +48,22 @@ final class CoreTest extends TestCase {
 
   public function testOrderLookupReturnsUpcomingTicketsOnly(): void {
     $passes = $this->lookup->ticketsForOrder('#100099999', ' SAMPLE.visitor@example.org ');
-    $this->assertCount(2, $passes, 'Two upcoming tickets; the past tour is left out.');
+    $this->assertCount(2, $passes, 'Two upcoming tickets; the past tour and the refunded ticket are left out.');
+    $this->assertSame('Sample Visitor', $passes[0]->holderName, 'Buyer name when the ticket has none.');
+    $this->assertSame('Second Visitor', $passes[1]->holderName, 'Ticket holder name when ACME has one.');
     $this->assertSame('at000000-000000000000000000-aaaa1111', $passes[0]->barcode);
     $this->assertSame('aaaa1111', $passes[0]->barcodeLabel);
     $this->assertSame('General Admission', $passes[0]->title);
     $this->assertSame('Member Adult', $passes[0]->typeName);
     $this->assertSame('2027-07-05', $passes[0]->expiresAt->format('Y-m-d'));
     $this->assertSame('test-key', $this->http->requests[0]['headers']['x-acme-api-key']);
+  }
+
+  public function testOrderSearchFallsBackToTheOlderPath(): void {
+    $this->http->searchPath = '/v2/b2c/orders/search';
+    $this->assertCount(2, $this->lookup->ticketsForOrder('100099999', 'sample.visitor@example.org'));
+    $this->assertStringContainsString('/v2/b2c/orders?email=', $this->http->requests[0]['url']);
+    $this->assertStringContainsString('/v2/b2c/orders/search?email=', $this->http->requests[1]['url']);
   }
 
   public function testOrderLookupNeedsBothOrderNumberAndEmail(): void {

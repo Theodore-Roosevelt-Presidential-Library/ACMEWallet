@@ -11,6 +11,11 @@
  *   data-kind      "order" (default) or "membership": which tab opens first.
  *   data-demo      "true" shows sample passes and never calls the API.
  *
+ * Links from a confirmation email can fill the form in:
+ *   ?order=100000000 or ?membership=300000000      the number only
+ *   #order=100000000&email=visitor@example.org     both, looked up at once
+ * See snippets/README.md.
+ *
  * This file holds no keys and signs nothing. It only talks to the lookup API
  * on www.trlibrary.com, which answers with labels and short-lived links.
  */
@@ -87,6 +92,40 @@
     return 'desktop';
   }
 
+  // What a link from a confirmation email can carry.
+  //
+  //   ?order=100000000                      fills in the order number
+  //   ?membership=300000000                 fills in the Membership ID
+  //   #order=100000000&email=a@example.org  fills in both and looks them up
+  //
+  // An email address is read from the part after "#" only. Browsers never
+  // send that part to a server, so it stays out of logs and referrers, and it
+  // is removed from the address bar as soon as it has been read.
+  function readLink() {
+    var found = { kind: null, number: '', email: '' };
+    var sources = [];
+    try {
+      sources.push(new URLSearchParams(window.location.search));
+      // A merge field drops the address in as typed, so a "+" in it is a
+      // plus sign, not an encoded space.
+      sources.push(new URLSearchParams(window.location.hash.replace(/^#/, '').replace(/\+/g, '%2B')));
+    } catch (e) { return found; }
+    sources.forEach(function (params, index) {
+      ['order', 'membership'].forEach(function (k) {
+        var digits = (params.get(k) || '').replace(/\D+/g, '').slice(0, 20);
+        if (digits && !found.number) { found.kind = k; found.number = digits; }
+      });
+      var email = index === 1 ? (params.get('email') || '').trim() : '';
+      if (email.length <= 254 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) found.email = email;
+    });
+    if (/(^|[#&])(order|membership|email)=/.test(window.location.hash) && window.history && window.history.replaceState) {
+      try { window.history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* keep going */ }
+    }
+    return found;
+  }
+  var LINK = null;
+  var linkRead = false;
+
   // Chrome, Firefox and Edge on iPhone name themselves in the user agent.
   function safari() {
     return !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/.test(navigator.userAgent || '');
@@ -149,6 +188,10 @@
     var endpoint = (host.getAttribute('data-endpoint') || DEFAULT_ENDPOINT).replace(/\/+$/, '');
     var demo = host.getAttribute('data-demo') === 'true';
     var kind = host.getAttribute('data-kind') === 'membership' ? 'membership' : 'order';
+    // The first lookup form on the page takes whatever the link carried.
+    var link = LINK || { kind: null, number: '', email: '' };
+    LINK = null;
+    if (link.kind) kind = link.kind;
     var root = el('div', { 'class': 'trw' });
     host.appendChild(root);
 
@@ -174,6 +217,10 @@
       var id = 'trw' + Math.random().toString(36).slice(2, 8);
       var number = el('input', { id: id + 'n', inputmode: 'numeric', autocomplete: 'off', required: '', maxlength: '20', placeholder: copy.placeholder, 'aria-describedby': id + 'h' });
       var email = el('input', { id: id + 'e', type: 'email', autocomplete: 'email', required: '', maxlength: '254' });
+      if (link.kind === kind) {
+        number.value = link.number;
+        email.value = link.email;
+      }
       var go = el('button', { type: 'submit', 'class': 'trw-go', text: 'Find my ' + (kind === 'order' ? 'tickets' : 'membership cards') });
       var form = el('form', { novalidate: '' }, [
         el('label', { 'for': id + 'n', text: copy.number }), number,
@@ -332,12 +379,18 @@
           });
         })
         .catch(function () { showForm('The lookup could not be reached. Check the connection and try again.', true); });
+    } else if (link.number && link.email) {
+      // The link carried both halves, so there is nothing to type.
+      clear();
+      root.appendChild(message('Finding your passes…'));
+      lookup(link.number, link.email);
     } else {
       showForm();
     }
   }
 
   function start() {
+    if (!linkRead) { linkRead = true; LINK = readLink(); }
     if (!document.getElementById('trw-css')) {
       var style = document.createElement('style');
       style.id = 'trw-css';

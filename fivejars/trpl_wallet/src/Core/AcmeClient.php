@@ -32,10 +32,15 @@ class AcmeClient {
    * ACME documents search by email or phone only, not by order number, so the
    * caller matches the order number itself.
    *
+   * VERIFY: the path. ACME's "B2C Orders" page gives GET /v2/b2c/orders with
+   * an email parameter; older notes give /v2/b2c/orders/search. The first is
+   * tried, and the second only if the first does not exist.
+   *
    * @return array<int,array<string,mixed>>
    */
   public function ordersByEmail(string $email): array {
-    $data = $this->getJson('/v2/b2c/orders/search', ['email' => $email]);
+    $data = $this->getJson('/v2/b2c/orders', ['email' => $email])
+      ?? $this->getJson('/v2/b2c/orders/search', ['email' => $email]);
     return $this->asList($data);
   }
 
