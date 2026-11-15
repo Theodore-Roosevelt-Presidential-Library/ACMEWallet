@@ -8,6 +8,7 @@ use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\trpl_wallet\Core\AcmeException;
+use Drupal\trpl_wallet\Core\ApplePassBuilder;
 use Drupal\trpl_wallet\Core\PassData;
 use Drupal\trpl_wallet\WalletFactory;
 use Psr\Log\LoggerInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * - POST /wallet/api/lookup      order or membership number + email
  * - GET  /wallet/api/passes?t=   passes behind an emailed link
- * - GET  /wallet/apple/{token}   one signed .pkpass
+ * - GET  /wallet/apple/{token}   one signed .pkpass, or a .pkpasses bundle
  * - GET  /wallet/google/{token}  redirect to a Save to Google Wallet link
  *
  * Nothing here is cacheable, nothing is stored, and logs carry no names,
@@ -122,26 +123,31 @@ class WalletController extends ControllerBase {
   }
 
   /**
-   * Serves one signed Apple Wallet pass.
+   * Serves one signed Apple Wallet pass, or a bundle of several.
+   *
+   * A token naming one pass returns a .pkpass. A token naming two to ten
+   * returns a .pkpasses bundle, which Safari on iPhone adds in one step.
    */
   public function apple(string $token, Request $request): Response {
     if ($this->unavailable() || !$this->wallet->appleReady()) {
       return $this->finish(new Response('Wallet passes are not available right now.', 503), $request);
     }
     $passes = $this->passesFromToken($token);
-    if (count($passes) !== 1) {
+    if (!$passes || count($passes) > ApplePassBuilder::BUNDLE_LIMIT) {
       return $this->finish(new Response('This link has expired. Please look up your order again.', 410), $request);
     }
+    $bundle = count($passes) > 1;
     try {
-      $file = $this->wallet->apple()->build($passes[0]);
+      $file = $bundle ? $this->wallet->apple()->bundle($passes) : $this->wallet->apple()->build($passes[0]);
     }
     catch (\Throwable $e) {
       $this->log->error('Apple pass could not be built: @message', ['@message' => $e->getMessage()]);
       return $this->finish(new Response('Wallet passes are not available right now.', 503), $request);
     }
+    $name = 'trlibrary-' . $passes[0]->kind . ($bundle ? 's.pkpasses' : '.pkpass');
     return $this->finish(new Response($file, 200, [
-      'Content-Type' => 'application/vnd.apple.pkpass',
-      'Content-Disposition' => 'attachment; filename="trlibrary-' . $passes[0]->kind . '.pkpass"',
+      'Content-Type' => $bundle ? 'application/vnd.apple.pkpasses' : 'application/vnd.apple.pkpass',
+      'Content-Disposition' => 'attachment; filename="' . $name . '"',
       'Content-Length' => (string) strlen($file),
     ]), $request);
   }
@@ -222,9 +228,14 @@ class WalletController extends ControllerBase {
       ];
     }
     $all = $tokens->sign(['r' => array_map(static fn(PassData $p): array => $p->ref, $passes)], $ttl);
+    $several = count($passes) > 1;
     return [
       'passes' => $items,
-      'google_all_url' => $google && count($passes) > 1 ? $this->link('trpl_wallet.google', $all) : NULL,
+      // Safari takes at most ten passes in one bundle. Larger orders fall
+      // back to the badge on each pass.
+      'apple_all_url' => $apple && $several && count($passes) <= ApplePassBuilder::BUNDLE_LIMIT
+        ? $this->link('trpl_wallet.apple', $all) : NULL,
+      'google_all_url' => $google && $several ? $this->link('trpl_wallet.google', $all) : NULL,
     ];
   }
 

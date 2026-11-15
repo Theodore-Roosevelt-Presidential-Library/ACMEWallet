@@ -56,6 +56,35 @@ class ApplePassBuilder {
   }
 
   /**
+   * Most passes Safari accepts in one bundle.
+   */
+  public const BUNDLE_LIMIT = 10;
+
+  /**
+   * Builds one bundle (.pkpasses) so a visitor can add several passes with
+   * a single tap, the way airlines hand over a family's boarding passes.
+   *
+   * A bundle is a plain zip of signed .pkpass files. Safari on iPhone opens
+   * it as one "Add All" sheet. It holds at most BUNDLE_LIMIT passes.
+   *
+   * @param \Drupal\trpl_wallet\Core\PassData[] $passes
+   *
+   * @return string
+   *   The .pkpasses file contents.
+   */
+  public function bundle(array $passes): string {
+    $passes = array_values($passes);
+    if (count($passes) < 2 || count($passes) > self::BUNDLE_LIMIT) {
+      throw new \InvalidArgumentException('A bundle holds 2 to ' . self::BUNDLE_LIMIT . ' passes.');
+    }
+    $files = [];
+    foreach ($passes as $index => $pass) {
+      $files[sprintf('%s-%02d.pkpass', $pass->kind, $index + 1)] = $this->build($pass);
+    }
+    return $this->zip($files);
+  }
+
+  /**
    * @return array<string,mixed>
    */
   public function passJson(PassData $pass): array {
@@ -100,6 +129,11 @@ class ApplePassBuilder {
       if ($pass->startsAt) {
         // Puts the ticket on the lock screen around the entry time.
         $json['relevantDate'] = $pass->startsAt->format(\DateTimeInterface::ATOM);
+      }
+      // Tickets from one order stack together in Wallet, so a family's
+      // passes sit as one group to swipe through at the door.
+      if ($pass->reference !== '') {
+        $json['groupingIdentifier'] = 'order-' . $pass->reference;
       }
       $json['eventTicket'] = [
         'primaryFields' => [

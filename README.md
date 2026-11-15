@@ -22,6 +22,9 @@ belongs in this repository or in its Actions secrets.
 - `embed.js`: the lookup as a drop-in. Usage is in the file header.
 - `preview/`: what the passes look like, with editable sample details.
 - `assets/`: styles, brand images, and a vendored QR library (MIT).
+- `assets/badges/`: the official Add to Google Wallet and Add to Apple Wallet
+  artwork. Not MIT; see [`assets/badges/NOTICE.md`](assets/badges/NOTICE.md).
+- `snippets/`: copy-and-paste code for web pages and confirmation emails.
 - `scripts/build_pass_art.py`: rebuilds pass logos and icons from the
   [brand kit](https://brand.labs.trlibrary.com). Tickets are Night Sky,
   membership cards Dark Forest.

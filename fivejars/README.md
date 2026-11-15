@@ -29,6 +29,8 @@ email). Both values must match the ACME record.
 Nothing is stored. Tokens are HMAC-signed, expire, and carry only ACME ids.
 Each download re-reads ACME, so a refunded ticket or lapsed card stops working.
 
+The exact responses each route must return are in [`API.md`](API.md).
+
 ## Layout
 
 ```
@@ -150,9 +152,6 @@ brand kit lists as still to come. The TR Brand Mark stands in until then.
   of device registrations and an APNs call; Google needs REST calls to patch
   objects. Planned as the next phase. Until then a pass is correct when added
   and each Apple pass carries an expiry.
-- **Official "Add to Wallet" badges.** The embed uses plain text buttons.
-  Apple's and Google's badge artwork must be downloaded from them and used
-  unaltered; drop the files into the Pages site and style `.trw-btn`.
 - **Existing libraries.** The signer is about 250 lines with no dependencies.
   If you would rather maintain a library, `pkpass/pkpass` (Apple) and
   `firebase/php-jwt` (Google) replace `ApplePassBuilder::sign()`/`zip()` and
