@@ -101,7 +101,7 @@ Returned by both JSON routes when `status` is `ok`.
       "type": "Adult",
       "holder": "Sample Visitor",
       "starts": "2026-11-20T13:00:00-07:00",
-      "expires": "2026-11-21T00:00:00-07:00",
+      "expires": "2026-11-21T23:59:59-07:00",
       "apple_url": "https://www.trlibrary.com/wallet/apple/eyJy…",
       "google_url": "https://www.trlibrary.com/wallet/google/eyJy…"
     },
@@ -130,7 +130,7 @@ only; both are shown here for reference.
 | `type` | string | Ticket type ("Adult", "Youth") or "Member" |
 | `holder` | string | Ticket holder or cardholder name |
 | `starts` | string or null | ISO 8601 with offset. Entry time for a ticket; start of benefits for a card, when ACME has one. |
-| `expires` | string or null | ISO 8601 with offset. The day after the visit for a ticket; the membership end date for a card. |
+| `expires` | string or null | ISO 8601 with offset. The end of the day after the visit for a ticket; the membership end date for a card. |
 | `apple_url` | string or null | Absolute link to the Apple route. `null` until the Apple certificate is installed. |
 | `google_url` | string or null | Absolute link to the Google route. `null` until the Google key is installed. |
 | `google_all_url` | string or null | One link that saves every pass to Google Wallet at once. `null` when there is only one pass or Google is not set up. Apple has no equivalent. |
