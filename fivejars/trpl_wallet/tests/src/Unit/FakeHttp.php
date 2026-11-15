@@ -14,6 +14,9 @@ final class FakeHttp implements HttpClientInterface {
 
   public int $forceStatus = 0;
 
+  /** Path ACME answers order searches on. The other one returns 404. */
+  public string $searchPath = '/v2/b2c/orders';
+
   public function get(string $url, array $headers = []): array {
     $this->requests[] = ['url' => $url, 'headers' => $headers];
     if ($this->forceStatus) {
@@ -24,7 +27,7 @@ final class FakeHttp implements HttpClientInterface {
     $path = (string) parse_url($url, PHP_URL_PATH);
     parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
 
-    if ($path === '/v2/b2c/orders/search') {
+    if ($path === $this->searchPath) {
       // Search results come back without tickets, as ACME's samples show.
       $summary = json_decode($order, TRUE);
       foreach ($summary['orderItems'] as &$item) {

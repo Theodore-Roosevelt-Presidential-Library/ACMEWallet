@@ -1,21 +1,45 @@
 <!-- Wallet badges for the ticket and membership confirmation emails.
+
      Table layout and PNG images, because many email clients drop SVG and
-     modern CSS. Change WALLET_PAGE_URL if the lookup lives somewhere else. -->
+     modern CSS. Pick ONE of the three links below and use it on both badges.
+     snippets/README.md explains the choice.
+
+     WALLET_PAGE_URL is written as https://www.trlibrary.com/wallet. Change it
+     if the lookup page lives somewhere else.
+
+     ACME_ORDER_NUMBER and ACME_EMAIL are placeholders. Replace each with the
+     merge field ACME's email editor offers for that value. For the membership
+     email use membership= and the Membership ID merge field in place of
+     order= and the order number.
+
+     1. Plain link. Works with no merge fields. The visitor types the order
+        number and email.
+          https://www.trlibrary.com/wallet
+
+     2. Prefilled link. Needs the order number merge field. The visitor types
+        only the email.
+          https://www.trlibrary.com/wallet?order=ACME_ORDER_NUMBER
+
+     3. One-tap link. Needs both merge fields, and the module set to instant
+        delivery. Nothing to type. Keep the "#": everything after it stays in
+        the visitor's browser and is never sent to a server.
+          https://www.trlibrary.com/wallet#order=ACME_ORDER_NUMBER&email=ACME_EMAIL
+-->
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0">
   <tr>
     <td colspan="2" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#25282A;padding:0 8px 4px 8px">
-      Save this to a phone. Have the order number and this email address ready.
+      Save this to a phone:
     </td>
   </tr>
   <tr>
     <td style="padding:8px">
-      <a href="https://www.trlibrary.com/wallet">
+      <a href="https://www.trlibrary.com/wallet?order=ACME_ORDER_NUMBER">
         <img src="https://wallet.labs.trlibrary.com/assets/badges/apple/add-to-apple-wallet.png"
              alt="Add to Apple Wallet" height="48" width="152" style="display:block;height:48px;width:152px;border:0">
       </a>
     </td>
     <td style="padding:8px">
-      <a href="https://www.trlibrary.com/wallet">
+      <a href="https://www.trlibrary.com/wallet?order=ACME_ORDER_NUMBER">
         <img src="https://wallet.labs.trlibrary.com/assets/badges/google/enUS_add_to_google_wallet_wallet-button.png"
              alt="Add to Google Wallet" height="48" width="272" style="display:block;height:48px;width:272px;border:0">
       </a>

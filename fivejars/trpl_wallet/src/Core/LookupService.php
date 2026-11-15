@@ -117,6 +117,12 @@ class LookupService {
         if ($uuid === '' || $ticketId === '') {
           continue;
         }
+        // ACME marks each ticket Normal, Rebook, Refund or Void. Only a
+        // Normal ticket still scans, so only those become passes.
+        $status = (string) ($ticket['ticketStatus'] ?? 'Normal');
+        if (strcasecmp($status, 'Normal') !== 0) {
+          continue;
+        }
         $parts = explode('-', $uuid);
         $passes[] = new PassData(
           kind: PassData::TICKET,
@@ -124,7 +130,7 @@ class LookupService {
           barcode: $uuid,
           barcodeLabel: (string) end($parts),
           title: (string) ($item['eventName'] ?? 'Admission'),
-          holderName: trim(($order['firstName'] ?? '') . ' ' . ($order['lastName'] ?? '')),
+          holderName: self::holder($ticket, $order),
           typeName: (string) ($item['ticketingTypeName'] ?? ''),
           startsAt: $starts,
           // ACME emails show tickets expiring the day after the visit.
@@ -213,6 +219,27 @@ class LookupService {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * The name on a ticket: the ticket holder if ACME has one, else the buyer.
+   *
+   * @param array<string,mixed> $ticket
+   * @param array<string,mixed> $order
+   */
+  private static function holder(array $ticket, array $order): string {
+    $pairs = [
+      [$ticket['firstName'] ?? '', $ticket['lastName'] ?? ''],
+      [$order['contactFirstName'] ?? '', $order['contactLastName'] ?? ''],
+      [$order['firstName'] ?? '', $order['lastName'] ?? ''],
+    ];
+    foreach ($pairs as [$first, $last]) {
+      $name = trim(trim((string) $first) . ' ' . trim((string) $last));
+      if ($name !== '') {
+        return $name;
+      }
+    }
+    return '';
   }
 
   private static function digits(string $value): string {

@@ -62,6 +62,10 @@ Content-Type: application/json
 | `number` | string | Order number or membership ID. Non-digits are stripped; 1 to 20 digits must remain. |
 | `email` | string | A valid address, 254 characters at most. Must match the email on the order or on an active cardholder. |
 
+The form sends this same request whether the visitor typed the values or
+arrived by a link from a confirmation email that carried them. See "Links
+from confirmation emails" in [`README.md`](README.md).
+
 ### Responses
 
 | HTTP | Body | When | What the form shows |

@@ -105,16 +105,44 @@ Every one of these lives in `AcmeClient` or `LookupService`.
 |---|---|---|
 | Ticket barcode is `orderItems[].ticketVos[].uuid`, a string starting `at` | API docs; matches the QR in real emails | Format confirmed in emails; field not yet read from API |
 | Membership barcode is `cardholders[].barcode`, nine digits per cardholder | Sample response; matches real emails | Format confirmed in emails; field not yet read from API |
-| `GET /v2/b2c/orders/search?email=` then `GET /v2/b2c/orders/{id}` | API docs | Not yet run |
+| Orders are searched by email with `GET /v2/b2c/orders?email=`, then `GET /v2/b2c/orders/{id}` | ACME's "B2C Orders" page. Older notes give `/v2/b2c/orders/search` | Not yet run. The client tries the first path and falls back to the second on a 404 |
 | Headers `x-acme-api-key` and `x-b2c-tenant-id` (tenant 613) | API docs | Not yet run |
 | `GET /v2/b2b/memberships` accepts a membership-number filter | **Guess.** Docs show the endpoint, not its filters | Must check. Code re-checks the number on each result, so a wrong filter is slow, not unsafe |
 | `GET /v2/b2b/memberships/{id}` | **Guess** | Must check |
-| Order has `firstName` / `lastName` | **Guess** | Must check; only affects the name shown |
+| Buyer name is `contactFirstName` / `contactLastName`; a ticket may carry its own `firstName` / `lastName` | ACME's "B2C Orders" page | Not yet run; only affects the name shown. The ticket's own name wins when present |
 | Visitor-facing "Membership ID" equals `acmeMembershipNumber` | Emails show a nine-digit ID | Must check |
-| Cancelled or refunded tickets drop out of the order response | Unknown | Must check; add a status filter if not |
+| Each ticket has `ticketStatus`: `Normal`, `Rebook`, `Refund` or `Void` | ACME's "B2C Orders" page | Not yet run. Only `Normal` tickets become passes; a ticket with no status is treated as `Normal` |
 
 ACME publishes no rate limits and no webhooks that we could find. The module
 makes one to three ACME calls per lookup and per download.
+
+## Links from confirmation emails
+
+ACME sends the ticket and membership emails, so a link in them can carry only
+what ACME's email editor merges in. The lookup form accepts three forms, set
+out with the email snippet in [`../snippets/README.md`](../snippets/README.md):
+
+1. **Plain:** the lookup page. The visitor types both values.
+2. **Prefilled:** `?order=<order number>`. The visitor types the email.
+3. **One-tap:** `#order=<order number>&email=<email>`. The form looks the
+   order up at once.
+
+Nothing changes in the module for these; the form sends the same
+`POST /wallet/api/lookup` either way. Two things to settle with the Library:
+
+- **Which merge fields ACME offers.** Not confirmed. Check ACME's email
+  template editor for an order number, a Membership ID and an email address.
+- **Delivery mode for one-tap.** In `email` mode a lookup always answers
+  `sent` and emails a link, which makes no sense for someone who just tapped a
+  link in an email. One-tap needs `delivery_mode: instant`. What that gives
+  up: in instant mode the API says whether an order number and email pair
+  matched, so it could be used to test guesses. The rate limits (5 tries per
+  number, 10 per address, every 15 minutes) and the need to know both values
+  keep that slow, and the same two values already sit in every confirmation
+  email next to the QR codes. Email mode stays the safer default.
+
+The email address travels after `#`, which browsers never send to a server.
+Do not move it into the query string; the form ignores an email there.
 
 ## Pass artwork and colors
 
